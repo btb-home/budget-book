@@ -4,12 +4,15 @@ from pydantic_settings import BaseSettings
 
 class Setting(BaseSettings):
     # Project info
+    PROJECT_NAME: str = Field(default="yabas Field")
+
+    # Database info
     DB_DRIVER: str = Field(default="jdbc protocol")
     DB_DATABASE: str = Field(default="database")
-    DB_USERNAME: str = Field(default="username")
-    DB_PASSWORD: str = Field(default="password")
+    DB_USERNAME: str = Field(default="myusername")
+    DB_PASSWORD: str = Field(default="mypassword")
     DB_HOST: str = Field(default="127.0.0.1")
-    DB_PORT: int = Field(default=5433)
+    DB_PORT: int = Field(default=5432)
     
     @property
     def DATABASE_URL(self):
