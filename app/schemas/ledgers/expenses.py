@@ -19,4 +19,4 @@ class LedgerExpenseResponse(LedgerExpenseBase):
     id: int  # 고유 ID
     
     class Config:
-        orm_mode = True  # SQLAlchemy 모델과 호환되도록 설정
+        from_attributes = True  # SQLAlchemy 모델과 호환되도록 설정
