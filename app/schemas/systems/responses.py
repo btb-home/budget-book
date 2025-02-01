@@ -12,7 +12,7 @@ class JSendResponse(BaseModel):
         
 class SuccessResponse(JSendResponse):
     status: StatusCode = StatusCode.SUCCESS
-    data: dict | list = {}
+    data: str | dict | list = {}
     pagination: Union[
         policy.PageBase,
         policy.OffsetBase,
@@ -22,9 +22,13 @@ class SuccessResponse(JSendResponse):
 
     @model_validator(mode="after")
     def populate_data_from_message(self):
+        if type(self.data) is str:
+            self.data = {"message": self.data}
+        
         # self.data가 비어 있고 self.message가 있으면 data에 message 값 설정
         if not self.data and self.message:
             self.data = {"message": self.message}
+        
         return self
     
 class FailureResponse(JSendResponse):

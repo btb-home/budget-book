@@ -46,7 +46,7 @@ class YabasBaseModel(BaseModel):
 def _pascal_to_snake(input_string: str):
     return re.sub(r"(?<!^)(?=[A-Z])", "_", input_string).lower()
 
-class YabasModel(moduleBase, YabasBaseModel):
+class BGBModel(moduleBase, YabasBaseModel):
     __abstract__ = True
 
     class Config:

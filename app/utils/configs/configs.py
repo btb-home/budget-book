@@ -4,7 +4,7 @@ from pydantic_settings import BaseSettings
 
 class Setting(BaseSettings):
     # Project info
-    PROJECT_NAME: str = Field(default="yabas Field")
+    PROJECT_NAME: str = Field(default="Yabas Field")
 
     # Database info
     DB_DRIVER: str = Field(default="jdbc protocol")
