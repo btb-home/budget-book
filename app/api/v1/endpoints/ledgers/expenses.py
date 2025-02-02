@@ -12,7 +12,7 @@ router = APIRouter()
 @router.get("", response_model=GetListResponse)
 async def get_ledger_expenses(session: Session = Depends(get_session)) -> Response:
     
-    data = []
+    data = await svc.fetch_expense_list(session)
 
     return SuccessResponse(
         data=data,
@@ -30,10 +30,22 @@ async def post_ledger_expenses(
         data=data,
     )
 
+@router.get("/{id}", response_model=SuccessResponse)
+async def get_ledger_expenses(
+    session: Session = Depends(get_session),
+    id: int = Path(...),
+) -> Response:
+    
+    data = await svc.fetch_expense_one(session, id)
+
+    return GetOneResponse(
+        data=data,
+    )
+    
 @router.delete("/{id}", response_model=SuccessResponse)
 async def delete_ledger_expenses(
     session: Session = Depends(get_session),
-    id: str = Path(...),
+    id: int = Path(...),
 ) -> Response:
     
     data = []

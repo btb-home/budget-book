@@ -68,7 +68,7 @@ def update(db: Session, model_cls: DBModel, schema_cls: PySchema) -> PySchema:
     return _inner
 
 
-def fetch_all(
+def select_all(
     db: Session, model_cls: DBModel, schema_cls: PySchema
 ) -> List[DBModel]:
     """
@@ -76,10 +76,11 @@ def fetch_all(
     """
 
     def _inner(
-        query: dict, orderby: str = None, asc: bool = True, limit: int = 10, offset: int = 0,
+        query: dict = None, orderby: str = None, asc: bool = True, limit: int = 10, offset: int = 0,
     ):
         # 쿼리 조건 설정
-        query_filters = [col == val for col, val in query.items()]
+        query = query or dict()
+        query_filters = [getattr(model_cls, col) == val for col, val in query.items()]
 
         # 정렬 처리
         orderby = orderby or model_cls.created_dttm.name
@@ -108,15 +109,18 @@ def fetch_all(
     return _inner
 
 
-def fetch_one(
+def select_one(
     db: Session, model_cls: DBModel, schema_cls: PySchema
 ) -> DBModel | None:
     """
     ## 데이터 단건 조회 기본
     """
 
-    def _inner(query: dict, required: bool = False):
-        result = fetch_all(db, model_cls, schema_cls)(
+    def _inner(query: dict = None, required: bool = False):
+        # 쿼리 조건 설정
+        query = query or dict()
+
+        result = select_all(db, model_cls, schema_cls)(
             query=query, orderby="created_dttm", asc=True, limit=1, offset=0
         )
 
