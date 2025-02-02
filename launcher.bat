@@ -1,3 +1,6 @@
+alembic revision --autogenerate
+alembic upgrade head
+
 docker build -t btbdocker/budget-book:0.0.1 -f docker/Dockerfile .
 docker stop poc
 docker rm poc

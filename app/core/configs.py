@@ -17,5 +17,4 @@ class ModuleConfig(Setting):
             alias=lambda field_name: MODULE_PREFIX + field_name.upper()
         )
 
-
 configs = ModuleConfig()
