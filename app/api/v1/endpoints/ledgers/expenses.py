@@ -30,8 +30,11 @@ async def post_ledger_expenses(
         data=data,
     )
 
-@router.delete("", response_model=SuccessResponse)
-async def delete_ledger_expenses(session: Session = Depends(get_session)) -> Response:
+@router.delete("/{id}", response_model=SuccessResponse)
+async def delete_ledger_expenses(
+    session: Session = Depends(get_session),
+    id: str = Path(...),
+) -> Response:
     
     data = []
 
