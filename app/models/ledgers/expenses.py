@@ -4,7 +4,7 @@ from app.models.model import BGBModel
 
 
 class LedgerExpense(BGBModel):
-    sid = Column(Integer, primary_key=True, autoincrement=True)  # 고유 ID
+    id = Column(Integer, primary_key=True, autoincrement=True)  # 고유 ID
     
     transaction_date = Column(Date, index=True)  # 거래일 (지출일자)
     

@@ -43,6 +43,6 @@ async def fetch_expense_one(
     """
     data = select_one(
         session, LedgerExpense, LedgerExpenseResponse
-    )(query={LedgerExpense.sid.name: id})
+    )(query={LedgerExpense.id.name: id})
 
     return data
