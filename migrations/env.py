@@ -11,7 +11,7 @@ from sqlalchemy import pool
 
 # add your model's MetaData object here
 # for 'autogenerate' support
-from app.models.model import moduleBase
+from app.models.base import moduleBase
 target_metadata = moduleBase.metadata
 
 from alembic import context

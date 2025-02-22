@@ -15,6 +15,10 @@ async def lifespan(app: FastAPI):
     try:
         # 애플리케이션 시작 시 초기 데이터 로드
         await init_redis_data()
+        
+        from app.models.base import BaseModel
+        from app.core.extensions import engine
+        BaseModel.metadata.create_all(bind=engine)
 
         yield
     except asyncio.CancelledError:

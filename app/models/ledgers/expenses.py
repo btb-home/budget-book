@@ -1,9 +1,9 @@
 from sqlalchemy import Column, Integer, String, Date
 
-from app.models.model import BGBModel
+from app.models.base import BaseModel
 
 
-class LedgerExpense(BGBModel):
+class LedgerExpense(BaseModel):
     id = Column(Integer, primary_key=True, autoincrement=True)  # 고유 ID
     
     transaction_date = Column(Date, index=True)  # 거래일 (지출일자)
