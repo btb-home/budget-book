@@ -1,10 +1,10 @@
 from sqlalchemy.orm import Session
 
-from app.utils.decorators.db import transactional
+from app.utils.database.decorator import transactional
 from app.models.ledgers.expenses import LedgerExpense
-from app.schemas.ledgers.expenses import LedgerExpenseBase, LedgerExpenseResponse
-from app.schemas.ledgers.expenses import LedgerExpenseCreate
-from app.crud.basic import select_all, select_one, insert
+from app.schemas.ledgers.expenses import LedgerExpenseBase, LedgerExpenseResponse, LedgerExpenseCreate
+from app.utils.database.basic import select_all, select_one, insert
+from app.common.logging.logger import LOGGER
 
 @transactional
 async def fetch_expense_list(
@@ -13,25 +13,26 @@ async def fetch_expense_list(
     """
     Create a new ledger expense.
     """
-    data = select_all(
+    data = await select_all(
         session, LedgerExpense, LedgerExpenseResponse
     )(orderby=LedgerExpense.transaction_date.name)
     
     return data
 
-
 @transactional
 async def create_expense(
-    session: Session,
+    db_session: Session,
     ledger_expense_create: LedgerExpenseCreate,
 ) -> LedgerExpense:
     """
     Create a new ledger expense.
     """
-    insert(session, LedgerExpense, LedgerExpenseCreate)(
+    res = insert(db_session, LedgerExpense, LedgerExpenseCreate)(
         data=ledger_expense_create
     )
-    return "done"
+    LOGGER.info(f"LedgerExpense Created: {res}")
+    
+    return {"data": str(res)}
 
 
 @transactional
@@ -41,7 +42,7 @@ async def fetch_expense_one(
     """
     Create a new ledger expense.
     """
-    data = select_one(
+    data = await select_one(
         session, LedgerExpense, LedgerExpenseResponse
     )(query={LedgerExpense.id.name: id})
 

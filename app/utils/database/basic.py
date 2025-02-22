@@ -6,9 +6,9 @@ from sqlalchemy.orm import Session
 
 # from app.core.logger import logger
 from app.models.base import BaseModel
+from app.common.logging.logger import LOGGER
 
-
-def insert(db: Session, model_cls: BaseModel, schema_cls: PySchema) -> None:
+def insert(db_session: Session, model_cls: BaseModel, schema_cls: PySchema) -> BaseModel:
     """
     ## 데이터 단건 생성
     """
@@ -19,17 +19,17 @@ def insert(db: Session, model_cls: BaseModel, schema_cls: PySchema) -> None:
 
         # Process
         if upsert:
-            obj = db.merge(obj)
+            obj = db_session.merge(obj)
         else:
-            db.add(obj)
+            db_session.add(obj)
 
-        db.flush()
-        db.refresh(obj)
+        db_session.flush()
+        db_session.refresh(obj)
 
-        print(f"'{model_cls.__tablename__}' Inserted: {data}, Upsert : {upsert}")
+        LOGGER.info(f"'{model_cls.__tablename__}' Inserted: {data}, Upsert : {upsert}")
 
         # Output
-        return None
+        return obj
 
     return _inner
 
@@ -49,7 +49,7 @@ def update(db: Session, model_cls: BaseModel, schema_cls: PySchema) -> PySchema:
             .filter(*query_filters)
         )
 
-        print(
+        LOGGER.info(
             f"Query: {model_cls.__tablename__}, Filters: {len(query_filters)}, "
         )
 
@@ -96,7 +96,7 @@ def select_all(
             .offset(offset)
         )
 
-        print(
+        LOGGER.info(
             f"Query: {model_cls.__tablename__}, Filters: {query}, "
             f"Order by: {orderby} ({'ASC' if asc else 'DESC'}), Limit: {limit} (Offset: {offset})"
         )
@@ -149,7 +149,7 @@ def exists(
         # 존재 여부 쿼리 작성
         stmt = db.query(model_cls).filter(*query_filters)
 
-        print(
+        LOGGER.info(
             f"Exists Query: {model_cls.__tablename__}, Filters: {query}"
         )
 
@@ -174,7 +174,7 @@ def delete(db: Session, model_cls: BaseModel, schema_cls: PySchema) -> None:
             .filter(*query_filters)
         )
 
-        print(
+        LOGGER.info(
             f"Query: {model_cls.__tablename__}, Filters: {len(query_filters)}, "
         )
 
