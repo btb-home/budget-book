@@ -1,9 +1,9 @@
 import logging
 from app.core.configs import AppConfig
 
-logging.basicConfig(level=AppConfig.APP_LOG_LEVEL.value)
+logging.basicConfig(level=AppConfig.APP_LOG_LEVEL)
 
 uvicorn_logger = logging.getLogger("uvicorn.error")
-uvicorn_logger.setLevel(AppConfig.UVICORN_LOG_LEVEL.value)
+uvicorn_logger.setLevel(AppConfig.UVICORN_LOG_LEVEL)
 
-app_logger = logging.getLogger("app")
+LOGGER = logging.getLogger("app")
