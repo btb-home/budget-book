@@ -1,9 +1,11 @@
+#app/main.py
+
 from fastapi import FastAPI
 from app.api.routers import api_router
-from app.core.configs import configs
+from app.core.configs import AppConfig
 
 app = FastAPI(
-    title=configs.PROJECT_NAME,
+    title=AppConfig.APP_NAME,
 )
 
 @app.get("/")
