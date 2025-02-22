@@ -1,6 +1,6 @@
 import json
 from typing import List, Optional
-from app.core.extensions import redis_app
+from app.core.databases import redis_app
 
 def delete_redis(key: str) -> None:
     """

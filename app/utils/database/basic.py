@@ -83,7 +83,7 @@ def select_all(
         query_filters = [getattr(model_cls, col) == val for col, val in query.items()]
 
         # 정렬 처리
-        orderby = orderby or model_cls.created_dttm.name
+        orderby = orderby or model_cls.creation_dttm.name
         orderby_column = getattr(model_cls, orderby)
         orderby_expression = orderby_column.asc() if asc else orderby_column.desc()
 
@@ -121,7 +121,7 @@ def select_one(
         query = query or dict()
 
         result = select_all(db, model_cls, schema_cls)(
-            query=query, orderby="created_dttm", asc=True, limit=1, offset=0
+            query=query, orderby="creation_dttm", asc=True, limit=1, offset=0
         )
 
         # 결과 처리

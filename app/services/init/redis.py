@@ -1,6 +1,6 @@
 import asyncio
 from app.common.logging.logger import LOGGER
-from app.utils.extensions.redis import lock, unlock, ping
+from app.utils.database.redis import lock, unlock, ping
 
 async def init_redis_data():
     # 동기적으로 lock을 확인하고 처리

@@ -1,7 +1,7 @@
 from contextvars import ContextVar
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
-from app.core.extensions import engine
+from app.core.databases import engine
 
 SessionMaker = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 db_session_context = ContextVar("db_session", default=None)

@@ -13,7 +13,7 @@ async def fetch_expense_list(
     """
     Create a new ledger expense.
     """
-    data = await select_all(
+    data = select_all(
         session, LedgerExpense, LedgerExpenseResponse
     )(orderby=LedgerExpense.transaction_date.name)
     
@@ -32,7 +32,7 @@ async def create_expense(
     )
     LOGGER.info(f"LedgerExpense Created: {res}")
     
-    return {"data": str(res)}
+    return res.as_dict()
 
 
 @transactional
@@ -42,7 +42,7 @@ async def fetch_expense_one(
     """
     Create a new ledger expense.
     """
-    data = await select_one(
+    data = select_one(
         session, LedgerExpense, LedgerExpenseResponse
     )(query={LedgerExpense.id.name: id})
 
