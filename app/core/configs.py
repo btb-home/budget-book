@@ -33,6 +33,7 @@ class AppConfig:
 
     APP_LOG_LEVEL: str = os.environ["APP_LOG_LEVEL"]
     
+    # Uvicorn Config
     UVICORN_LOG_LEVEL: str = os.environ["UVICORN_LOG_LEVEL"]
     
     # Redis Config

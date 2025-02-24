@@ -31,6 +31,12 @@ class SafeRotatingFileHandler(TimedRotatingFileHandler):
         # 부모 클래스인 TimedRotatingFileHandler 초기화
         TimedRotatingFileHandler.__init__(self, filename, when, interval, backupCount, encoding, delay, utc, atTime)
 
+    def _format_filename(self) -> str:
+        """
+        로그 파일 이름을 포맷팅합니다.
+        """
+        return self.baseFilename
+    
     def doRollover(self):
         """
         로그 파일을 롤오버하는 작업을 확장합니다.
@@ -67,7 +73,7 @@ class SafeRotatingFileHandler(TimedRotatingFileHandler):
                 time_tuple = time.localtime(t + addend)
         
         # 파일 이름 포맷을 바탕으로 새 롤오버된 파일 이름 생성
-        dfn = self.format_filename() + "." + time.strftime(self.suffix, time_tuple)
+        dfn = self._format_filename() + "." + time.strftime(self.suffix, time_tuple)
         
         # 롤오버된 파일이 아직 없으면 기본 파일을 새 파일로 이름 변경
         if not os.path.exists(self.baseFilename) and not os.path.lexists(self.baseFilename):
