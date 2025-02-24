@@ -8,16 +8,18 @@ class Setting:
     APP_ROOT_DIR: Path = Path(__root__)
     ROOT_DIR: Path = APP_ROOT_DIR.parent
     CONF_DIR: Path = ROOT_DIR / "conf"
+    print(CONF_DIR)
 
     @classmethod
     def load_env(cls):
         os.chdir(cls.APP_ROOT_DIR)
 
-        app_env = os.getenv("ENVIRONMENT", "local")
+        app_env = os.getenv("APP_ENVIRONMENT", "local")
         assert app_env in ("local", "dev", "prod"), f"Invalid environment: {app_env}"
 
         dotenv_path = cls.CONF_DIR / app_env / f".env.{app_env}"
         load_dotenv(dotenv_path, verbose=True)
+        print(dotenv_path)
 
         return cls()
 
