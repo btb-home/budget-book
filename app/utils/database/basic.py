@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 # from app.core.logger import logger
 from app.models.base import BaseModel
-from app.common.logging.logger import LOGGER
+from app.core.logger import LOGGER
 
 def insert(db_session: Session, model_cls: BaseModel, schema_cls: PySchema) -> BaseModel:
     """

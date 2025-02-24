@@ -15,9 +15,8 @@ class LedgerExpenseBase(BaseModel):
 class LedgerExpenseCreate(LedgerExpenseBase):
     pass
 
-class LedgerExpenseResponse(LedgerExpenseBase):
+class LedgerExpenseRes(LedgerExpenseBase):
     id: int  # 고유 ID
-    
     class Config:
         from_attributes = True  # SQLAlchemy 모델과 호환되도록 설정
  

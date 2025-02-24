@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from app.services.init.redis import init_redis_data
 from app.services.init.database import init_database
-from app.common.logging.logger import LOGGER
+from app.core.logger import LOGGER
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

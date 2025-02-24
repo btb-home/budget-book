@@ -1,5 +1,5 @@
 import asyncio
-from app.common.logging.logger import LOGGER
+from app.core.logger import LOGGER
 from app.utils.database.redis import lock, unlock, ping
 
 async def init_redis_data():

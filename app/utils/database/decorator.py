@@ -3,7 +3,7 @@ from functools import wraps
 from sqlalchemy.orm import Session
 
 from app.utils.database.session import SessionMaker, db_session_context
-from app.common.logging.logger import LOGGER
+from app.core.logger import LOGGER
 
 
 # 트랜잭션 데코레이터

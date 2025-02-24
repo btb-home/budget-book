@@ -2,9 +2,9 @@ from sqlalchemy.orm import Session
 
 from app.utils.database.decorator import transactional
 from app.models.ledgers.expenses import LedgerExpense
-from app.schemas.ledgers.expenses import LedgerExpenseBase, LedgerExpenseResponse, LedgerExpenseCreate
+from app.schemas.ledgers.expenses import LedgerExpenseBase, LedgerExpenseRes, LedgerExpenseCreate
 from app.utils.database.basic import select_all, select_one, insert
-from app.common.logging.logger import LOGGER
+from app.core.logger import LOGGER
 
 @transactional
 async def fetch_expense_list(
@@ -14,7 +14,7 @@ async def fetch_expense_list(
     Create a new ledger expense.
     """
     data = select_all(
-        session, LedgerExpense, LedgerExpenseResponse
+        session, LedgerExpense, LedgerExpenseRes
     )(orderby=LedgerExpense.transaction_date.name)
     
     return data
@@ -43,7 +43,7 @@ async def fetch_expense_one(
     Create a new ledger expense.
     """
     data = select_one(
-        session, LedgerExpense, LedgerExpenseResponse
+        session, LedgerExpense, LedgerExpenseRes
     )(query={LedgerExpense.id.name: id})
 
     return data
