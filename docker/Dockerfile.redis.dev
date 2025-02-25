@@ -1,0 +1,16 @@
+# Redis 3.2 버전 이미지를 기반으로 사용
+FROM redis:3.2
+
+WORKDIR /code
+
+# 개발 환경에 맞는 추가 설정 (필요시)
+COPY ./conf/dev/ /code/conf/dev/
+COPY ./conf/dev/redis.conf /usr/local/etc/redis/redis.conf
+
+# 환경 변수 설정
+ENV ENV_PATH="/code/conf/dev/.env.dev"
+ENV APP_ENVIRONMENT=dev
+
+EXPOSE 6379
+
+CMD ["redis-server", "/usr/local/etc/redis/redis.conf"]

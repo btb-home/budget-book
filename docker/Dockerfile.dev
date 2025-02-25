@@ -1,0 +1,25 @@
+# Dockerfile.dev
+
+FROM python:3.12.3
+
+# 작업 디렉터리 설정
+WORKDIR /code
+
+# 패키지 설치
+COPY ./requirements.txt /code/requirements.txt
+RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+
+# app 디렉토리를 컨테이너로 복사
+COPY ./app /code/app
+COPY ./conf/dev/ /code/conf/dev
+COPY ./data /code/data
+
+# 환경 변수 설정
+ENV ENV_PATH="/code/conf/dev/.env.dev"
+ENV APP_ENVIRONMENT=dev
+
+# Application 포트 열기
+EXPOSE 8030
+
+# Uvicorn 실행
+CMD ["uvicorn", "app.main:app", "--reload", "--host", "0.0.0.0", "--port", "8030"]

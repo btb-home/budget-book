@@ -1,0 +1,29 @@
+services:
+  budget-book-be-redis:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.redis.dev  # 커스터마이징된 Redis Dockerfile 사용
+    container_name: budget-book-be-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - mynetwork
+    restart: unless-stopped
+  
+  budget-book-be-app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.dev
+    container_name: budget-book-be-app
+    ports:
+      - "80:8030"
+    depends_on:
+      - budget-book-be-redis
+    environment:
+      - REDIS_HOST=budget-book-be-redis  # Redis 서비스 이름 사용
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge
