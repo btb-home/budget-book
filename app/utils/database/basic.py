@@ -26,7 +26,7 @@ def insert(db_session: Session, model_cls: BaseModel, schema_cls: PySchema) -> B
         db_session.flush()
         db_session.refresh(obj)
 
-        LOGGER.info(f"'{model_cls.__tablename__}' Inserted: {data}, Upsert : {upsert}")
+        LOGGER.info(f"Table ({model_cls.__tablename__}), Inserted: {data}, Upsert : {upsert}")
 
         # Output
         return obj

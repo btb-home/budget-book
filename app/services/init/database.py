@@ -19,6 +19,6 @@ async def init_database(db_session: Session):
     user_account = [UserAccountReq.model_validate(user) for user in user_accounts]
 
     for data in user_account:
-        insert_data = insert(db_session, UserAccount, UserAccountReq)(data)
-        print(insert_data)
+        insert_data = insert(db_session, UserAccount, UserAccountReq)(data, upsert=True)
+        print(f"{insert_data=}")
     
