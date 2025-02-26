@@ -13,6 +13,8 @@ class Setting:
     @classmethod
     def load_env(cls):
         os.chdir(cls.APP_ROOT_DIR)
+        os.environ["ROOT_DIR"] = str(cls.ROOT_DIR)
+        os.environ["APP_ROOT_DIR"] = str(cls.APP_ROOT_DIR)
 
         app_env = os.getenv("APP_ENVIRONMENT", "local")
         assert app_env in ("local", "dev", "prod"), f"Invalid environment: {app_env}"
@@ -33,6 +35,8 @@ class AppConfig:
     APP_VERSION: str = os.environ["APP_VERSION"]
     APP_ENVIRONMENT: str = os.environ["APP_ENVIRONMENT"]
 
+    ROOT_DIR: Path = os.environ["ROOT_DIR"]
+    APP_ROOT_DIR: Path = os.environ["APP_ROOT_DIR"]
     APP_LOG_LEVEL: str = os.environ["APP_LOG_LEVEL"]
     
     # Uvicorn Config
