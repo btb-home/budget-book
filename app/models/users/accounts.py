@@ -9,5 +9,3 @@ class UserAccount(BaseModel):
     id = Column(String)  # 사용자 ID
     name = Column(String)  # 사용자 이름
     password = Column(String)  # 사용자 비밀번호
-
-    permission_id = Column(String)  # 권한명
