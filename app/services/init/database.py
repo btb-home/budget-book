@@ -1,4 +1,4 @@
-from app.models.base import BaseModel
+from app.models.base import ModelBase
 from app.core.databases import engine
 from app.core.logger import LOGGER
 from app.services.init.data import load_init_data
@@ -11,7 +11,7 @@ from sqlalchemy.orm.session import Session
 @transactional
 async def init_database(db_session: Session):
     # 데이터베이스 스키마 생성
-    BaseModel.metadata.create_all(bind=engine)
+    ModelBase.metadata.create_all(bind=engine)
     LOGGER.info("Database initialized")
 
     # 데이터 로드 및 초기화

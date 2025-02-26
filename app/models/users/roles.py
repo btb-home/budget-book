@@ -1,9 +1,9 @@
 from sqlalchemy import Column, Integer, String, Date
 
-from app.models.base import BaseModel
+from app.models.base import ModelBase
 
 
-class UserRole(BaseModel):
+class UserRole(ModelBase):
     _id = Column(Integer, primary_key=True, autoincrement=True)  # 고유 ID
     
     id = Column(String)  # 역할 ID

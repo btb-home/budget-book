@@ -5,10 +5,10 @@ from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
 
 # from app.core.logger import logger
-from app.models.base import BaseModel
+from app.models.base import ModelBase
 from app.core.logger import LOGGER
 
-def insert(db_session: Session, model_cls: BaseModel, schema_cls: PySchema) -> BaseModel:
+def insert(db_session: Session, model_cls: ModelBase, schema_cls: PySchema) -> ModelBase:
     """
     ## 데이터 단건 생성
     """
@@ -34,7 +34,7 @@ def insert(db_session: Session, model_cls: BaseModel, schema_cls: PySchema) -> B
     return _inner
 
 
-def update(db: Session, model_cls: BaseModel, schema_cls: PySchema) -> PySchema:
+def update(db: Session, model_cls: ModelBase, schema_cls: PySchema) -> PySchema:
     """
     ## 데이터 단건 수정
     """
@@ -69,8 +69,8 @@ def update(db: Session, model_cls: BaseModel, schema_cls: PySchema) -> PySchema:
 
 
 def select_all(
-    db: Session, model_cls: BaseModel, schema_cls: PySchema
-) -> List[BaseModel]:
+    db: Session, model_cls: ModelBase, schema_cls: PySchema
+) -> List[ModelBase]:
     """
     ## 데이터 다건 조회 기본
     """
@@ -110,8 +110,8 @@ def select_all(
 
 
 def select_one(
-    db: Session, model_cls: BaseModel, schema_cls: PySchema
-) -> BaseModel | None:
+    db: Session, model_cls: ModelBase, schema_cls: PySchema
+) -> ModelBase | None:
     """
     ## 데이터 단건 조회 기본
     """
@@ -136,7 +136,7 @@ def select_one(
 
 
 def exists(
-    db: Session, model_cls: BaseModel, schema_cls: PySchema
+    db: Session, model_cls: ModelBase, schema_cls: PySchema
 ) -> bool:
     """
     ## 데이터 단건 존재 여부 파악
@@ -159,7 +159,7 @@ def exists(
     return _inner
 
 
-def delete(db: Session, model_cls: BaseModel, schema_cls: PySchema) -> None:
+def delete(db: Session, model_cls: ModelBase, schema_cls: PySchema) -> None:
     """
     ## 데이터 단건 삭제
     """

@@ -1,9 +1,9 @@
 from sqlalchemy import Column, Integer, String, Date
 
-from app.models.base import BaseModel
+from app.models.base import ModelBase
 
 
-class UserPolicy(BaseModel):
+class UserPolicy(ModelBase):
     _id = Column(Integer, primary_key=True, autoincrement=True)  # 고유 ID
     
     id = Column(String)  # 정책 ID

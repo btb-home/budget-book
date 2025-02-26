@@ -6,7 +6,7 @@ from sqlalchemy.ext.declarative import declarative_base, declared_attr
 # Base class for SQLAlchemy models
 moduleBase = declarative_base()
 
-class BaseModel(moduleBase):
+class ModelBase(moduleBase):
     __abstract__ = True
 
     # Audit columns
