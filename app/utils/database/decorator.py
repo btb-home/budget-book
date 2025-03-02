@@ -1,7 +1,7 @@
 # utils/database/decorator.py
 
 from functools import wraps
-from sqlalchemy.orm import Session
+from sqlalchemy.exc import SQLAlchemyError
 from app.utils.database.session import db_session_context, get_sync_session
 from app.core.logger import LOGGER
 
@@ -19,11 +19,16 @@ def transactional(func):
             result = await func(db_session=db_session, *args, **kwargs)
             db_session.commit()
             LOGGER.info("Transaction is committed")
+        except SQLAlchemyError as e:
+            if db_session:
+                db_session.rollback()
+                LOGGER.info(f"Transaction is rollbacked - {e}")
+            raise
         except Exception as e:
             if db_session:
                 db_session.rollback()
-            LOGGER.exception(f"Transaction is rollbacked: {e}")
-            raise e
+                LOGGER.exception(f"Transaction is rollbacked - {e}")
+            raise
         finally:
             if db_session:
                 db_session.close()

@@ -21,7 +21,6 @@ class ClientErrorHandler:
 class ServerErrorHandler:
     @staticmethod
     async def handle(request: Request, exc: Exception):
-        LOGGER.error(exc, exc_info=True)
 
         return JSONResponse(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

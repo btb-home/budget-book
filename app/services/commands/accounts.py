@@ -24,7 +24,7 @@ async def sign_in(
     if not data:
         raise Exception("User Account Not Found")
     
-    res_data = data # .to_res()
+    res_data = data
     LOGGER.info(f"User Account Fetched: {res_data}")
         
     return res_data

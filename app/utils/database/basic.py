@@ -23,7 +23,7 @@ def insert(db: Session, model_cls: ModelBase, schema_cls: PySchema) -> PySchema:
         db.flush()
         db.refresh(stmt)
 
-        LOGGER.info(f"Insert: Table={model_cls.__tablename__}, Data={data}, Upsert={upsert}")
+        LOGGER.info(f"Insert: ({model_cls.__tablename__}), Data={data}, Upsert={upsert}")
 
         res_dict = stmt
         return schema_cls.model_validate(res_dict.__dict__)
@@ -39,7 +39,7 @@ def update(db: Session, model_cls: ModelBase, schema_cls: PySchema) -> PySchema:
 
         stmt = db.query(model_cls).filter(*query_filters)
 
-        LOGGER.info(f"Update: Table={model_cls.__tablename__}, Filters={key}")
+        LOGGER.info(f"Update: ({model_cls.__tablename__}), Filters={key}")
 
         res = stmt.first()
 
@@ -79,7 +79,7 @@ def select_all(db: Session, model_cls: ModelBase, schema_cls: PySchema) -> List[
         )
 
         LOGGER.info(
-            f"Select All: Table={model_cls.__tablename__}, Filters={query}, OrderBy={orderby}, ASC={asc}, Limit={limit}, Offset={offset}"
+            f"Select: ({model_cls.__tablename__}) Filters={query}, OrderBy={orderby}, ASC={asc}, Limit={limit}, Offset={offset}"
         )
 
         res = stmt.all()
@@ -99,6 +99,7 @@ def select_one(db: Session, model_cls: ModelBase, schema_cls: PySchema) -> PySch
         )
 
         if not result:
+            LOGGER.warning(f"Data not found: ({model_cls.__tablename__}) Filters={query}")
             raise NoResultFound("Data not found")
 
         return result[0]

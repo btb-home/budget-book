@@ -8,7 +8,6 @@ class Setting:
     APP_ROOT_DIR: Path = Path(__root__)
     ROOT_DIR: Path = APP_ROOT_DIR.parent
     CONF_DIR: Path = ROOT_DIR / "conf"
-    print(CONF_DIR)
 
     @classmethod
     def load_env(cls):
@@ -21,7 +20,6 @@ class Setting:
 
         dotenv_path = cls.CONF_DIR / app_env / f".env.{app_env}"
         load_dotenv(dotenv_path, verbose=True)
-        print(dotenv_path)
 
         return cls()
 

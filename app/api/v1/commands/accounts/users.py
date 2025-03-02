@@ -25,7 +25,7 @@ async def sign_out_account(
     user_account_req: py_schema.UserAccountReq = Body(...),
 ) -> Response:
     
-    data = await svc.create_account(user_account_req)
+    data = await svc.sign_out(user_account_req)
 
     return GetOneResponse(
         data=data,
