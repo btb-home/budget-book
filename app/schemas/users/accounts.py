@@ -24,4 +24,7 @@ class UserAccountReq(UserAccountBase, ReqBase):
 class UserAccountUpdate(UserAccountBase):
     pass
 
-
+# User Sign In
+class UserSingIn(BaseModel):
+    id: str = Field(..., title="User ID")
+    password: str = Field(..., title="User Password")

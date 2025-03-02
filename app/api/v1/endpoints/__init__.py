@@ -30,7 +30,7 @@ def include_routers(base_path: Path, tag: str = None):
                 router.include_router(
                     module.router,
                     prefix=f"/{item.parent.name}/{item.stem}",
-                    tags=[tag],  # Use the provided tag for the router
+                    tags=[f"data:{tag}"],  # Use the provided tag for the router
                 )
 
 

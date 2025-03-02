@@ -91,7 +91,7 @@ def select_one(db: Session, model_cls: ModelBase, schema_cls: PySchema) -> PySch
     """
     ## 데이터 단건 조회 기본
     """
-    def _inner(query: dict = None, required: bool = False) -> PySchema | None:
+    def _inner(query: dict = None) -> PySchema | None:
         query = query or {}
 
         result = select_all(db, model_cls, schema_cls)(
@@ -99,9 +99,7 @@ def select_one(db: Session, model_cls: ModelBase, schema_cls: PySchema) -> PySch
         )
 
         if not result:
-            if required:
-                raise NoResultFound("Data not found")
-            return None
+            raise NoResultFound("Data not found")
 
         return result[0]
 

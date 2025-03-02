@@ -3,7 +3,7 @@ from pathlib import Path
 
 from fastapi import APIRouter
 
-router = APIRouter(prefix="/commands")
+router = APIRouter(prefix="")
 
 
 def load_module_from_file(file_path: Path):
@@ -30,7 +30,7 @@ def include_routers(base_path: Path, tag: str = None):
                 router.include_router(
                     module.router,
                     prefix=f"/{item.parent.name}/{item.stem}",
-                    tags=[tag],  # Use the provided tag for the router
+                    tags=[f"command:{tag.upper()}"],  # Use the provided tag for the router
                 )
 
 
