@@ -2,18 +2,18 @@ from fastapi import APIRouter, Depends, Path, Body, status
 from fastapi.responses import Response
 from sqlalchemy.orm import Session
 
-from app.utils.database.session import get_session
+from app.utils.database.session import get_sync_session
 from app.schemas.systems.responses import SuccessResponse, GetOneResponse, GetListResponse
 from app.schemas.ledgers.expenses import LedgerExpenseCreate
-import app.services.ledgers.expenses as svc
+import app.services.endpoints.ledgers.expenses as svc
 
 
 router = APIRouter()
 
 @router.get("", response_model=GetListResponse)
-async def get_ledger_expenses(session: Session = Depends(get_session)) -> Response:
+async def get_ledger_expenses() -> Response:
     
-    data = await svc.fetch_expense_list(session)
+    data = await svc.fetch_expense_list()
 
     return SuccessResponse(
         data=data,
@@ -21,11 +21,10 @@ async def get_ledger_expenses(session: Session = Depends(get_session)) -> Respon
 
 @router.post("", response_model=SuccessResponse)
 async def post_ledger_expenses(
-    db_session: Session = Depends(get_session),
     ledger_expense: LedgerExpenseCreate = Body(...),
 ) -> Response:
     
-    data = await svc.create_expense(db_session, ledger_expense)
+    data = await svc.create_expense(ledger_expense)
 
     return SuccessResponse(
         data=data,
@@ -33,11 +32,10 @@ async def post_ledger_expenses(
 
 @router.get("/{id}", response_model=SuccessResponse)
 async def get_ledger_expenses(
-    session: Session = Depends(get_session),
     id: int = Path(...),
 ) -> Response:
     
-    data = await svc.fetch_expense_one(session, id)
+    data = await svc.fetch_expense_one(id)
 
     return GetOneResponse(
         data=data,
@@ -45,7 +43,6 @@ async def get_ledger_expenses(
     
 @router.delete("/{id}", response_model=SuccessResponse)
 async def delete_ledger_expenses(
-    session: Session = Depends(get_session),
     id: int = Path(...),
 ) -> Response:
     

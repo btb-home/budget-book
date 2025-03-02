@@ -8,13 +8,13 @@ from app.core.logger import LOGGER
 
 @transactional
 async def fetch_expense_list(
-    session: Session,
+    db_session: Session,
 ) -> list[LedgerExpense]:
     """
     Create a new ledger expense.
     """
     data = select_all(
-        session, LedgerExpense, LedgerExpenseRes
+        db_session, LedgerExpense, LedgerExpenseRes
     )(orderby=LedgerExpense.transaction_date.name)
     
     return data
@@ -37,13 +37,13 @@ async def create_expense(
 
 @transactional
 async def fetch_expense_one(
-    session: Session, id: int
+    db_session: Session, id: int
 ) -> list[LedgerExpense]:
     """
     Create a new ledger expense.
     """
     data = select_one(
-        session, LedgerExpense, LedgerExpenseRes
+        db_session, LedgerExpense, LedgerExpenseRes
     )(query={LedgerExpense.id.name: id})
 
     return data

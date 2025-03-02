@@ -1,4 +1,6 @@
 import re
+from typing import Type
+from pydantic import BaseModel as PySchema
 from datetime import datetime
 from sqlalchemy import Column, DateTime, String
 from sqlalchemy.ext.declarative import declarative_base, declared_attr
@@ -40,6 +42,16 @@ class ModelBase(moduleBase):
             if column.name not in excludes
         }
 
+    def to_pydantic(self, schema_cls: Type[PySchema]) -> PySchema:
+        """
+        Convert the SQLAlchemy model instance to a Pydantic model instance.
+        """
+        data = {
+            column.name: getattr(self, column.name)
+            for column in self.__table__.columns
+        }
+        return schema_cls(**data)
+    
     def __str__(self):
         """String representation of the model instance."""
         attrs = [attr for attr in dir(self) if not callable(getattr(self, attr)) and not attr.startswith("__")]

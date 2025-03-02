@@ -6,7 +6,7 @@ if __name__ == "__main__":
     try:
         host = "127.0.0.1"
         port = 8031
-        print("Start the app launcher at http://{}:{}".format(host, port))
+        print("Start the py app launcher at http://{}:{}".format(host, port))
 
         uvicorn.run(
             "app.main:app", 

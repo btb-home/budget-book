@@ -15,7 +15,7 @@ async def lifespan(app: FastAPI):
     try:
         # 애플리케이션 시작 시 초기 데이터 로드
         await init_redis_data()
-        await init_database()
+        # await init_database()
         
         yield
     except (asyncio.CancelledError, KeyboardInterrupt) as e:

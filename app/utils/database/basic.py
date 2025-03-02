@@ -34,7 +34,7 @@ def insert(db_session: Session, model_cls: ModelBase, schema_cls: PySchema) -> M
     return _inner
 
 
-def update(db: Session, model_cls: ModelBase, schema_cls: PySchema) -> PySchema:
+def update(db_session: Session, model_cls: ModelBase, schema_cls: PySchema) -> PySchema:
     """
     ## 데이터 단건 수정
     """
@@ -45,7 +45,7 @@ def update(db: Session, model_cls: ModelBase, schema_cls: PySchema) -> PySchema:
 
         # 쿼리 작성
         stmt = (
-            db.query(model_cls)
+            db_session.query(model_cls)
             .filter(*query_filters)
         )
 
@@ -69,7 +69,7 @@ def update(db: Session, model_cls: ModelBase, schema_cls: PySchema) -> PySchema:
 
 
 def select_all(
-    db: Session, model_cls: ModelBase, schema_cls: PySchema
+    db_session: Session, model_cls: ModelBase, schema_cls: PySchema
 ) -> List[ModelBase]:
     """
     ## 데이터 다건 조회 기본
@@ -89,7 +89,7 @@ def select_all(
 
         # 쿼리 작성
         stmt = (
-            db.query(model_cls)
+            db_session.query(model_cls)
             .filter(*query_filters)
             .order_by(orderby_expression)
             .limit(limit)
@@ -104,13 +104,13 @@ def select_all(
         # 쿼리 수행
         res = stmt.all()
 
-        return [schema_cls.model_validate(r) for r in res]
+        return [r.to_pydantic(schema_cls) for r in res]
 
     return _inner
 
 
 def select_one(
-    db: Session, model_cls: ModelBase, schema_cls: PySchema
+    db_session: Session, model_cls: ModelBase, schema_cls: PySchema
 ) -> ModelBase | None:
     """
     ## 데이터 단건 조회 기본
@@ -120,17 +120,17 @@ def select_one(
         # 쿼리 조건 설정
         query = query or dict()
 
-        result = select_all(db, model_cls, schema_cls)(
+        result = select_all(db_session, model_cls, schema_cls)(
             query=query, orderby="creation_dttm", asc=True, limit=1, offset=0
         )
 
         # 결과 처리
-        if result is None or len(result) == 0:
+        if not result:
             if required:
                 raise NoResultFound("Data not found")
             return None
 
-        return result[0].model_dump()
+        return result[0]
 
     return _inner
 
