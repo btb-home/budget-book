@@ -18,9 +18,7 @@ async def fetch_account_list(
     )(orderby=db_model.UserAccount.id.name)
     
     res_data = [d.to_res() for d in data]
-    for d in data:
-        print(f"{type(d.to_res())}, {d.to_res()}")
-    print(res_data)
+    LOGGER.info(f"User Account Fetched: {res_data}")
         
     return res_data
 
@@ -34,10 +32,14 @@ async def create_account(
     """
     res = insert(
         db_session, db_model.UserAccount, py_schema.UserAccountBase
-    )(data=user_account_req)
-    LOGGER.info(f"Ledgeraccount Created: {res}")
+    )(data=user_account_req, upsert=True)
+
+    res_data = res.to_res()
+    LOGGER.info(
+        f"User Account Created: {type(res_data)}, {res_data}, {type(res_data.model_dump())},{res_data.model_dump()}"
+    )
     
-    return res.as_dict()
+    return res_data
 
 
 @connectional
@@ -52,6 +54,7 @@ async def fetch_account_one(
         db_session, db_model.UserAccount, py_schema.UserAccountBase
     )(query={db_model.UserAccount.id.name: id})
     
-    res_data: py_schema.UserAccountRes = data.to_res()
+    res_data = data.to_res()
+    LOGGER.info(f"User Account Fetched: {res_data}")
 
-    return res_data.model_dump()
+    return res_data

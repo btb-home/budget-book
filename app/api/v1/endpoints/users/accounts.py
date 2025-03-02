@@ -10,11 +10,9 @@ router = APIRouter()
 
 @router.get("", response_model=GetListResponse)
 async def get_account_list(
-
 ) -> Response:
     
     data = await svc.fetch_account_list()
-    print(f"{data=}")
 
     return GetListResponse(
         data=data,
@@ -27,7 +25,7 @@ async def create_account_info(
     
     data = await svc.create_account(user_account_req)
 
-    return SuccessResponse(
+    return GetOneResponse(
         data=data,
     )
 

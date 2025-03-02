@@ -14,11 +14,11 @@ class UserAccountBase(BaseModel):
         return UserAccountRes(**res_data)
 
 class UserAccountRes(UserAccountBase, ResBase):
-    password: None = Field(..., title="User Password", exclude=True)
+    password: Optional[str] = Field(..., title="User Password", exclude=True)
 
     
 class UserAccountReq(UserAccountBase, ReqBase):
-    pass
+    password: str = Field(..., title="User Password")
 
 
 class UserAccountUpdate(UserAccountBase):

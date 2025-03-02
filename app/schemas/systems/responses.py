@@ -61,7 +61,7 @@ class ErrorResponse(JSendResponse):
     
 class GetOneResponse(SuccessResponse):
     status: StatusCode = StatusCode.SUCCESS
-    data: dict = {}
+    data: BaseModel | list[BaseModel] = Field(...)
 
     class Config:
         json_schema_extra = {
@@ -78,7 +78,7 @@ class GetOneResponse(SuccessResponse):
         
 class GetListResponse(SuccessResponse):
     status: StatusCode = StatusCode.SUCCESS
-    data: list  = []
+    data: list = Field(...)
 
     class Config:
         json_schema_extra = {
@@ -100,7 +100,7 @@ class GetListResponse(SuccessResponse):
 
 class GetListResponseWithPagination(SuccessResponse):
     status: StatusCode = StatusCode.SUCCESS
-    data: list[dict] = []
+    data: list[BaseModel | dict] = []
     pagination: Union[
         policy.PageBase,
         policy.OffsetBase,
@@ -130,7 +130,7 @@ class GetListResponseWithPagination(SuccessResponse):
 class ActionResponse(SuccessResponse):
     status: StatusCode = StatusCode.SUCCESS
     message: str = "Request Submitted"
-    data: dict | None = None
+    data: BaseModel | dict | None = None
 
     class Config:
         json_schema_extra = {
