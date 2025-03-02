@@ -6,6 +6,10 @@ from sqlalchemy.exc import InvalidRequestError, NoResultFound, SQLAlchemyError
 from app.core.logger import LOGGER
 from app.schemas.systems.responses import FailureResponse, ErrorResponse
 
+class SessionException(HTTPException):
+    def __init__(self, status_code: int, detail: str):
+        super().__init__(status_code=status_code, detail=detail)
+        
 class ClientErrorHandler:
     @staticmethod
     async def handle(request: Request, exc: HTTPException):

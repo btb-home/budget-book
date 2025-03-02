@@ -9,10 +9,13 @@ class JSendResponse(BaseModel):
     code: int | None = Field(None, exclude=True)
     message: str | None = Field(None, exclude=True)
     data: dict | list | None = Field(None, exclude=True)
-        
+    
+    class Config:
+        from_attributes = True
+
 class SuccessResponse(JSendResponse):
     status: StatusCode = StatusCode.SUCCESS
-    data: str | dict | list = {}
+    data: str | dict | list | BaseModel = Field(..., example="Success Response")
     pagination: Union[
         policy.PageBase,
         policy.OffsetBase,
@@ -22,11 +25,12 @@ class SuccessResponse(JSendResponse):
 
     @model_validator(mode="after")
     def populate_data_from_message(self):
-        if type(self.data) is str:
+        # data가 문자열일 때는 data를 {"message": data}로 변환
+        if isinstance(self.data, str):
             self.data = {"message": self.data}
         
-        # self.data가 비어 있고 self.message가 있으면 data에 message 값 설정
-        if not self.data and self.message:
+        # data가 비어 있고 message가 있을 경우 message를 data에 설정
+        elif not self.data and self.message:
             self.data = {"message": self.message}
         
         return self
@@ -129,13 +133,12 @@ class GetListResponseWithPagination(SuccessResponse):
 
 class ActionResponse(SuccessResponse):
     status: StatusCode = StatusCode.SUCCESS
+    data: str | dict | list | BaseModel = Field(None, example="Success Response")
     message: str = "Request Submitted"
-    data: BaseModel | dict | None = None
 
     class Config:
         json_schema_extra = {
             "example": {
-                # Request
                 "status": StatusCode.SUCCESS,
                 "message": "Request Submitted",
             },

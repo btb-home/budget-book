@@ -1,6 +1,6 @@
 import json
 from typing import List, Optional
-from app.core.databases import redis_app
+from app.core.databases import redis_db
 
 def delete_redis(key: str) -> None:
     """
@@ -8,8 +8,8 @@ def delete_redis(key: str) -> None:
     
     :param key: 삭제할 Redis 키
     """
-    if redis_app.exists(key):
-        redis_app.delete(key)
+    if redis_db.exists(key):
+        redis_db.delete(key)
 
 def set_redis(key: str, value: dict) -> None:
     """
@@ -18,7 +18,7 @@ def set_redis(key: str, value: dict) -> None:
     :param key: 저장할 Redis 키
     :param value: 저장할 데이터 (딕셔너리)
     """
-    redis_app.set(key, json.dumps(value))
+    redis_db.set(key, json.dumps(value))
 
 def get_redis(key: str) -> Optional[List[dict]]:
     """
@@ -28,8 +28,8 @@ def get_redis(key: str) -> Optional[List[dict]]:
     :param key: 가져올 Redis 키
     :return: Redis에서 가져온 데이터 (없으면 None)
     """
-    if redis_app.exists(key):
-        return json.loads(redis_app.get(key))
+    if redis_db.exists(key):
+        return json.loads(redis_db.get(key))
     return None
 
 def next_seq(seq_name: str) -> int:
@@ -39,7 +39,7 @@ def next_seq(seq_name: str) -> int:
     :param seq_name: 시퀀스 이름
     :return: 증가된 시퀀스 값
     """
-    return redis_app.incr(seq_name)
+    return redis_db.incr(seq_name)
 
 def lock() -> bool:
     """
@@ -47,7 +47,7 @@ def lock() -> bool:
     
     :return: 락을 설정할 수 있으면 True, 아니면 False
     """
-    return redis_app.setnx("lock", 1)
+    return redis_db.setnx("lock", 1)
 
 def unlock() -> None:
     """
@@ -61,4 +61,4 @@ def ping() -> str:
     
     :return: Redis 서버 응답
     """
-    return redis_app.ping()
+    return redis_db.ping()

@@ -59,3 +59,6 @@ class AppConfig:
     SQLALCHEMY_DATABASE_PORT: int = int(os.environ["SQLALCHEMY_DATABASE_PORT"])
     SQLALCHEMY_DATABASE_DBNAME: str = os.environ["SQLALCHEMY_DATABASE_DBNAME"]
     
+    # SESSION
+    SESSION_SECRET_KEY: str = os.environ["SESSION_SECRET_KEY"]
+    SESSION_ALGORITHM: str = os.environ["SESSION_ALGORITHM"]
