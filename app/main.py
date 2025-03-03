@@ -20,6 +20,12 @@ app = FastAPI(
 def main():
     return {"message": "Hello, FastAPI!"}
 
+from app.utils.middlewares.headers import HeaderHandlingMiddleware
+from app.utils.middlewares.logging import LoggingMiddleware
+
+app.add_middleware(LoggingMiddleware)
+app.add_middleware(HeaderHandlingMiddleware)
+
 app.add_exception_handler(ProjectException, ClientErrorHandler.handle)
 app.add_exception_handler(SQLAlchemyError, DatabaseErrorHandler.handle)
 app.add_exception_handler(HTTPException, ClientErrorHandler.handle)

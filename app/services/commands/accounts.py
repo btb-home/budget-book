@@ -1,6 +1,6 @@
 from app.services.commands.login_session import create_session, check_session
 from app.models.users.accounts import UserAccount
-from app.schemas.users.accounts import UserSingIn, UserAccountReq, UserCheckIn, UserAccountRes, UserAccountBase
+from app.schemas.users.accounts import UserSignIn, UserAccountReq, UserCheckIn, UserAccountRes, UserAccountBase
 from app.utils.database.decorator import transactional, connectional
 from app.core.logger import LOGGER
 from app.core.databases import redis_db
@@ -11,7 +11,7 @@ import app.common.exceptions.database as db_exc
 
 @connectional
 async def auth(
-    user_signin_req: UserSingIn,
+    user_signin_req: UserSignIn,
     db_session: Session,
 ) -> bool:
     """
@@ -19,14 +19,14 @@ async def auth(
     """
     data = select_one(db_session, UserAccount, UserAccountRes)(query={
         UserAccount.id.name: user_signin_req.id,
-        UserAccount.password.name: user_signin_req.password,
+        UserAccount.password.name: user_signin_req.password.get_secret_value(),
     })
 
     if not data:
-        raise biz_exc.UserNotFoundException("User Account Not Found")
+        raise biz_exc.UserAuthenticationFail(user_signin_req.id)
 
     res_data = data.to_res()
-    LOGGER.info(f"User Account Fetched: {res_data}")
+    LOGGER.info(f"User Account Fetched: {res_data.id}")
     
     return res_data
 
@@ -34,7 +34,7 @@ async def auth(
 # 로그인 기능 (Sign-in)
 @connectional
 async def sign_in(
-    user_signin_req: UserSingIn,
+    user_signin_req: UserSignIn,
     db_session: Session,
 ) -> str:
     """
@@ -42,7 +42,7 @@ async def sign_in(
     """
     data = select_one(db_session, UserAccount, UserAccountRes)(query={
         UserAccount.id.name: user_signin_req.id,
-        UserAccount.password.name: user_signin_req.password,
+        UserAccount.password.name: user_signin_req.password.get_secret_value(),
     })
 
     if not data:

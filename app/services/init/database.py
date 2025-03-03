@@ -19,4 +19,5 @@ async def init_database(db_session: Session):
     user_account = [UserAccountReq.model_validate(user) for user in user_accounts]
 
     for data in user_account:
+        data.password = data.password.get_secret_value()
         insert(db_session, UserAccount, UserAccountReq)(data, upsert=True)
