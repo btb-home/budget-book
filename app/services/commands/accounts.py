@@ -26,7 +26,7 @@ async def auth(
         raise biz_exc.UserAuthenticationFail(user_signin_req.id)
 
     res_data = data.to_res()
-    LOGGER.info(f"User Account Fetched: {res_data.id}")
+    LOGGER.info(f"[  API] User Account Fetched: {res_data.id}")
     
     return res_data
 

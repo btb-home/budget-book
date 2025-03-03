@@ -5,6 +5,7 @@ from sqlalchemy.exc import InvalidRequestError, NoResultFound, SQLAlchemyError
 
 from app.core.logger import LOGGER
 from app.schemas.systems.responses import FailureResponse, ErrorResponse
+from app.common.exceptions.base import ProjectException
 
 class SessionException(HTTPException):
     def __init__(self, status_code: int, detail: str):
@@ -22,6 +23,21 @@ class ClientErrorHandler:
                 data={"message": str(exc.message)},
             ).model_dump(),  # .dict()를 사용해 객체를 딕셔너리로 변환
         )
+        
+class ProjectErrorHandler:
+    @staticmethod
+    async def handle(request: Request, exc: ProjectException):
+        LOGGER.error(f"[Error] [{exc.status_code}] {exc.detail}")
+
+        return JSONResponse(
+            status_code=exc.status_code,
+            content=FailureResponse(
+                status_code=exc.status_code,
+                data={"message": str(exc.message)},
+            ).model_dump(),  # .dict()를 사용해 객체를 딕셔너리로 변환
+        )
+        
+    
 
 
 class ServerErrorHandler:

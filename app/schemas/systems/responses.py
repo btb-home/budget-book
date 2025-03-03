@@ -40,16 +40,17 @@ class SuccessResponse(JSendResponse):
     
 class FailureResponse(JSendResponse):
     status: StatusCode = StatusCode.FAILURE
-    data: dict = {}
+    data: str | dict | list | BaseModel = Field(..., example="Success Response")
 
     class Config:
+        from_attributes = True
         json_schema_extra = {
             "example": {
                     # Request
                     "status": StatusCode.FAILURE,
                     "data": {"reason": "Failure Reason"},
                 },
-        }    
+        }
             
 class ErrorResponse(JSendResponse):
     status: StatusCode = StatusCode.ERROR
@@ -147,8 +148,3 @@ class ActionResponse(SuccessResponse):
             },
         }
         
-
-class ActionResponse(SuccessResponse):
-    status: StatusCode = StatusCode.SUCCESS
-    data: str | dict | list | BaseModel = Field(None, example="Success Response")
-    message: str = Field(..., example="Request Submitted")

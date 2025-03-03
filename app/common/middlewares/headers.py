@@ -3,7 +3,7 @@ from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
 from app.services.commands.clients_ip import get_client_ip
 
-class HeaderHandlingMiddleware(BaseHTTPMiddleware):
+class HeaderMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         # X-Correlation-ID가 없으면 생성
         if "X-Correlation-ID" not in request.headers:

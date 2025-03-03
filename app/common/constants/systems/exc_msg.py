@@ -5,6 +5,9 @@ DATA_EXCEPTION_MESSAGE = "Data Exception"
 
 # Bisiness Exception
 USER_AUTHENTICATION_FAIL_MESSAGE = "해당 ID의 사용자가 없습니다."
+SESSION_NOT_FOUND_EXCEPTION_MESSAGE = "세션을 찾을 수 없습니다."
+SESSION_EXPIRED_EXCEPTION_MESSAGE = "세션이 만료되었습니다."
+SESSION_GUEST_BANNED_EXCEPTION_MESSAGE = "게스트 사용자는 접근할 수 없습니다."
 
 # System Exception
 REDIS_SYSTEM_EXCEPTION_MESSAGE = "Redis System Exception"
