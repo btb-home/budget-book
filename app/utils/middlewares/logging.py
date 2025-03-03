@@ -24,7 +24,7 @@ class LoggingMiddleware(BaseHTTPMiddleware):
         log_record = self._log_request_response(x_correlation_id, request.url.path, request_info, response_info, process_time)
 
         log_func = self._get_log_function(response.status_code)
-        log_func(f"[  API] {json.dumps(log_record, ensure_ascii=False)}")
+        log_func(f"[  API/ {response.status_code}] {json.dumps(log_record, ensure_ascii=False)}")
 
         return response
 

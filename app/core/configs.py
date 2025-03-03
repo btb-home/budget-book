@@ -62,3 +62,4 @@ class AppConfig:
     # SESSION
     SESSION_SECRET_KEY: str = os.environ["SESSION_SECRET_KEY"]
     SESSION_ALGORITHM: str = os.environ["SESSION_ALGORITHM"]
+    SESSION_EXPIRE_MINUTES: int = int(os.environ["SESSION_EXPIRE_MINUTES"])

@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, Path, Body, status
 from fastapi.responses import Response
 from sqlalchemy.orm import Session
 
-from app.utils.database.session import get_sync_session
+from app.utils.database.db_session import get_sync_session
 from app.schemas.systems.responses import SuccessResponse, GetOneResponse, GetListResponse
 from app.schemas.ledgers.expenses import LedgerExpenseCreate
 import app.services.endpoints.ledgers.expenses as svc

@@ -22,9 +22,11 @@ def main():
 
 from app.utils.middlewares.headers import HeaderHandlingMiddleware
 from app.utils.middlewares.logging import LoggingMiddleware
+from app.utils.middlewares.sessions import SessionMiddleware
 
 app.add_middleware(LoggingMiddleware)
 app.add_middleware(HeaderHandlingMiddleware)
+app.add_middleware(SessionMiddleware)
 
 app.add_exception_handler(ProjectException, ClientErrorHandler.handle)
 app.add_exception_handler(SQLAlchemyError, DatabaseErrorHandler.handle)

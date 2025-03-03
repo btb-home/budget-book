@@ -1,36 +1,46 @@
 # utils/middlewares/sessions.py
 
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import Request, Depends
 from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.responses import Response
+from app.schemas.users.accounts import UserAccountRes
+from app.schemas.users.sessions import SessionData
+from app.utils.database.sessions import SessionStorage
 
-class SessionValidationMiddleware(BaseHTTPMiddleware):
-    def __init__(self, app: FastAPI):
-        super().__init__(app)
 
-    async def handle(self, request: Request) -> bool:
+def get_session_storage():
+    """
+    세션 저장소를 가져오는 함수.
+    """
+    session_storage = SessionStorage()
+    yield session_storage
+
+
+def get_session(
+    request: Request,
+    session_storage: SessionStorage = Depends(get_session_storage),
+):
+    """
+    세션을 가져오는 함수.
+    """
+    session_id = request.cookies.get("session_id")
+    session = session_storage.get(session_id)
+    return session
+
+
+class SessionMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
         """
         사용자 세션 유효성을 확인하는 함수.
         """
-        session_token = request.headers.get("Authorization")
-        if not session_token or not self.validate_session(session_token):
-            return False
-        return True
-
-    def validate_session(self, token: str) -> bool:
-        """
-        세션 검증 로직.
-        """
-        # 여기에 실제 세션 검증 로직 추가
-        # 예: 데이터베이스 조회 또는 캐시 검증
-        return token == "valid-session-token"
-
-    async def dispatch(self, request: Request, call_next) -> Response:
-        """
-        미들웨어의 메인 실행 함수.
-        """
-        if not await self.handle(request):
-            raise HTTPException(status_code=401, detail="Invalid or missing session token")
+        session: SessionData[UserAccountRes] = get_session(
+            request, next(get_session_storage())
+        )
         
+        body = await request.body()
+        # save_user_log(request, session, request_body)
+        
+        print(body)
+
         response = await call_next(request)
+
         return response

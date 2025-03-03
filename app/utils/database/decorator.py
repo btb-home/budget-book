@@ -2,7 +2,7 @@
 
 from functools import wraps
 from sqlalchemy.exc import SQLAlchemyError
-from app.utils.database.session import db_session_context, get_sync_session
+from app.utils.database.db_session import db_session_context, get_sync_session
 from app.core.logger import LOGGER
 
 # 트랜잭션 데코레이터
