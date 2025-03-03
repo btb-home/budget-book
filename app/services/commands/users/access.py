@@ -16,11 +16,12 @@ async def save_access_log(
     request: Request,
     session: SessionData,
     request_body: bytes,
+    db_session: Session,
 ) -> bool:
     """
     사용자가 로그인할 때, 사용자 계정 정보를 데이터베이스에서 조회하여 인증.
     """
-    if session and not(request.url).endswith("/sign-in"):
+    if session and not str(request.url).endswith("/sign-in"):
         user_log_req = UserAccessLogReq(
             user_id=session.user_info.id,
             user_name=session.user_info.name,

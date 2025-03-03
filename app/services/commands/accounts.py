@@ -7,7 +7,7 @@ from app.core.databases import redis_db
 from app.utils.database.basic import select_one, insert
 from sqlalchemy.orm.session import Session
 import app.common.exceptions.business as biz_exc
-import app.common.exceptions.database as db_exc
+import app.common.exceptions.data as db_exc
 
 @connectional
 async def auth(

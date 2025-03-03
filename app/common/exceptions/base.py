@@ -1,23 +1,26 @@
 from fastapi import status
-from app.common.constants.systems import exceptions
+from app.common.constants.systems import exc_msg
 
 
 class ProjectException(Exception):
     code = status.HTTP_500_INTERNAL_SERVER_ERROR
     message = "PROJECT Exception"
-    detail = exceptions.PROJECT_EXCEPTION_DETAIL
-    
-class SystemException(ProjectException):
-    code = status.HTTP_500_INTERNAL_SERVER_ERROR
-    message = "System Exception"
-    detail = exceptions.SYSTEM_EXCEPTION_DETAIL
+    detail = exc_msg.PROJECT_EXCEPTION_MESSAGE
 
-class DatabaseException(ProjectException):
-    code = status.HTTP_500_INTERNAL_SERVER_ERROR
-    message = "Database Exception"
-    detail = exceptions.DATABASE_EXCEPTION_DETAIL
 
 class BusinessException(ProjectException):
     code = status.HTTP_400_BAD_REQUEST
     message = "Business Exception"
-    detail = exceptions.BUSINESS_EXCEPTION_DETAIL
+    detail = exc_msg.BUSINESS_EXCEPTION_MESSAGE
+
+
+class SystemException(ProjectException):
+    code = status.HTTP_500_INTERNAL_SERVER_ERROR
+    message = "System Exception"
+    detail = exc_msg.SYSTEM_EXCEPTION_MESSAGE
+
+
+class DataException(ProjectException):
+    code = status.HTTP_500_INTERNAL_SERVER_ERROR
+    message = "Data Exception"
+    detail = exc_msg.DATA_EXCEPTION_MESSAGE

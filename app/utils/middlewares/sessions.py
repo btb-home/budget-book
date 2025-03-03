@@ -52,7 +52,7 @@ class SessionMiddleware(BaseHTTPMiddleware):
         )
         
         body = await request.body()
-        save_access_log(request, session, body)
+        await save_access_log(request, session, body)
 
         response = await call_next(request)
 

@@ -6,7 +6,7 @@ from app.core.logger import LOGGER
 from app.schemas.systems.logs import LogRecord, RequestLog, ResponseLog
 
 class LoggingMiddleware(BaseHTTPMiddleware):
-    LOG_LEVELS = {4: LOGGER.warning, 5: LOGGER.error}
+    LOG_LEVELS = {4: LOGGER.info, 5: LOGGER.error}
 
     async def dispatch(self, request: Request, call_next):
         if not request.url.path.startswith("/api"):

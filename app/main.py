@@ -1,4 +1,4 @@
-#app/main.py
+# app/main.py
 
 from fastapi import FastAPI, HTTPException
 from sqlalchemy.exc import SQLAlchemyError
@@ -7,22 +7,25 @@ from app.api.routers import api_router
 from app.core.configs import AppConfig
 from app.core.lifespan import lifespan
 from app.utils.middlewares.exception import (
-    ClientErrorHandler, DatabaseErrorHandler, ServerErrorHandler
+    ClientErrorHandler,
+    DatabaseErrorHandler,
+    ServerErrorHandler,
 )
+from app.utils.middlewares.headers import HeaderHandlingMiddleware
+from app.utils.middlewares.logging import LoggingMiddleware
+from app.utils.middlewares.sessions import SessionMiddleware
 from app.common.exceptions.base import ProjectException
+
 app = FastAPI(
-    title=AppConfig.APP_NAME,
-    version=AppConfig.APP_VERSION,
+    title=AppConfig.APP_NAME, 
+    version=AppConfig.APP_VERSION, 
     lifespan=lifespan
 )
+
 
 @app.get("/")
 def main():
     return {"message": "Hello, FastAPI!"}
-
-from app.utils.middlewares.headers import HeaderHandlingMiddleware
-from app.utils.middlewares.logging import LoggingMiddleware
-from app.utils.middlewares.sessions import SessionMiddleware
 
 app.add_middleware(LoggingMiddleware)
 app.add_middleware(HeaderHandlingMiddleware)
