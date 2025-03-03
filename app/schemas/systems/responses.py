@@ -12,7 +12,10 @@ class JSendResponse(BaseModel):
     
     class Config:
         from_attributes = True
-
+        json_encoders = {
+            BaseModel: lambda v: v.model_dump(),  # BaseModel을 자동으로 직렬화
+        }
+        
 class SuccessResponse(JSendResponse):
     status: StatusCode = StatusCode.SUCCESS
     data: str | dict | list | BaseModel = Field(..., example="Success Response")
@@ -143,3 +146,9 @@ class ActionResponse(SuccessResponse):
                 "message": "Request Submitted",
             },
         }
+        
+
+class ActionResponse(SuccessResponse):
+    status: StatusCode = StatusCode.SUCCESS
+    data: str | dict | list | BaseModel = Field(None, example="Success Response")
+    message: str = Field(..., example="Request Submitted")

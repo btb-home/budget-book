@@ -1,0 +1,39 @@
+from fastapi import Request
+from app.schemas.users.access import UserAccessLogReq
+from app.schemas.users.sessions import SessionData
+from app.services.commands.login_session import create_session, check_session
+from app.models.users.accounts import UserAccount
+from app.schemas.users.accounts import UserSignIn, UserAccountReq, UserCheckIn, UserAccountRes, UserAccountBase
+from app.utils.database.decorator import transactional, connectional
+from app.core.logger import LOGGER
+from app.core.databases import redis_db
+from app.utils.database.basic import select_one, insert
+from sqlalchemy.orm.session import Session
+from app.services.commands.clients_ip import get_client_ip
+
+@transactional
+async def save_access_log(
+    request: Request,
+    session: SessionData,
+    request_body: bytes,
+) -> bool:
+    """
+    사용자가 로그인할 때, 사용자 계정 정보를 데이터베이스에서 조회하여 인증.
+    """
+    if session and not(request.url).endswith("/sign-in"):
+        user_log_req = UserAccessLogReq(
+            user_id=session.user_info.id,
+            user_name=session.user_info.name,
+            client_ip=get_client_ip(request),
+            method=request.method,
+            request_url=request.url.components.path,
+            request_body=request_body
+        )
+    
+        print("============")
+        print(user_log_req)
+        print("============")
+    else:
+        print("============")
+        print(f"세션 정보가 없습니다.")
+        print("============")        

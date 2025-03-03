@@ -1,11 +1,13 @@
 # utils/middlewares/sessions.py
 
-from fastapi import Request, Depends
+from typing import Any
+from fastapi import Request, Depends, Response
 from starlette.middleware.base import BaseHTTPMiddleware
 from app.schemas.users.accounts import UserAccountRes
 from app.schemas.users.sessions import SessionData
 from app.utils.database.sessions import SessionStorage
-
+from app.services.commands.users.access import save_access_log
+from app.core.logger import LOGGER
 
 def get_session_storage():
     """
@@ -22,9 +24,22 @@ def get_session(
     """
     세션을 가져오는 함수.
     """
-    session_id = request.cookies.get("session_id")
+    session_id = request.cookies.get("session_id", "")
     session = session_storage.get(session_id)
     return session
+
+def set_session(response: Response, session: SessionData, session_storage: SessionStorage, session_id=None) -> str:
+    """
+    세션을 설정하는 함수.
+    """
+    
+    session_id = session_id if session_id else session_storage.generate_session_id()
+    session_storage.set(session_id, session.model_dump_json())
+    response.set_cookie("session_id", session_id, httponly=True)
+
+    LOGGER.info(f"Session set: {session_id}")
+
+    return session_id
 
 
 class SessionMiddleware(BaseHTTPMiddleware):
@@ -37,9 +52,7 @@ class SessionMiddleware(BaseHTTPMiddleware):
         )
         
         body = await request.body()
-        # save_user_log(request, session, request_body)
-        
-        print(body)
+        save_access_log(request, session, body)
 
         response = await call_next(request)
 

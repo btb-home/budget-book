@@ -7,4 +7,5 @@ class ReqBase(BaseModel):
 
 
 class ResBase(BaseModel):
-    pass
+    class Config:
+        from_attributes = True

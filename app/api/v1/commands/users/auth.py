@@ -8,21 +8,28 @@ from app.schemas.systems.responses import ActionResponse, SuccessResponse, GetOn
 import app.services.commands.accounts as svc
 import app.schemas.users.accounts as py_schema
 import app.services.commands.clients_ip as client_svc
+from app.utils.middlewares.sessions import set_session
+from app.schemas.users.sessions import SessionData
+from app.utils.middlewares.sessions import get_session_storage, SessionStorage
+from fastapi import Depends
 
 router = APIRouter()
 
 
 @router.post("/sign-in", response_model=SuccessResponse)
 async def sign_in_account(
-    request: Request,
+    response: Response,
+    session_storage: SessionStorage = Depends(get_session_storage),
     user_signin_req: py_schema.UserSignIn = Body(...),
 ) -> Response:
-    data = await svc.auth(user_signin_req)
+    user_info = await svc.auth(user_signin_req)
 
-    data = await svc.sign_in(user_signin_req)
+    session_data = SessionData.create(user_info)
+    session_id = set_session(response, session_data, session_storage)
 
     return ActionResponse(
-        message=data,
+        data=user_info,
+        message=f"세션 {session_id} 생성"
     )
 
 @router.post("/sign-out", response_model=SuccessResponse)

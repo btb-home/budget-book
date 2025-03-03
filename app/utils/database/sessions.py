@@ -16,7 +16,7 @@ class SessionStorage:
     def __delitem__(self, key):
         self.client.delete(key)
 
-    def generate_key(self) -> str:
+    def generate_session_id(self) -> str:
         return f"session:{uuid4().hex}"
 
     def refresh(

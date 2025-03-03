@@ -4,16 +4,16 @@ from datetime import datetime, timedelta
 
 T = TypeVar("T")
 
-
+from app.schemas.users.accounts import UserAccountBase
 class SessionData(BaseModel, Generic[T]):
     user_info: T = Field(..., title="User Information")
     last_session_time: datetime = Field(..., title="Last Session Time")
     expire_time: timedelta = Field(..., title="Expire Time (minutes)")
 
     @staticmethod
-    def create(data):
+    def create(user_info: BaseModel) -> "SessionData":
         return SessionData(
-            user_info=data,
+            user_info=user_info.model_dump(),
             last_session_time=datetime.now(),
             expire_time=timedelta(minutes=30),
         )
