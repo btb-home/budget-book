@@ -21,7 +21,7 @@ async def create_session(user_signin_req: dict) -> str:
     """
     사용자가 로그인할 때, 사용자 정보를 확인하고 JWT 토큰을 생성하여 Redis에 저장.
     """
-    session_id = f"session_id-{str(uuid4())}"
+    session_id = f"session_id-{str(uuid4().hex)}"
     access_token_data = {
         "sub": user_signin_req['id'],
         "name": user_signin_req['name'],

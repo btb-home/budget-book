@@ -2,11 +2,13 @@
     {
         "id": "boogie",
         "name": "부기",
-        "password": "qwer1234!"
+        "password": "qwer1234!",
+        "admin_role_yn": true
     },
     {
         "id": "ari",
         "name": "아리",
-        "password": "qwer1234!"
+        "password": "qwer1234!",
+        "admin_role_yn": true
     }
 ]

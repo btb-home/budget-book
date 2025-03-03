@@ -13,11 +13,13 @@ class SessionException(HTTPException):
 class ClientErrorHandler:
     @staticmethod
     async def handle(request: Request, exc: HTTPException):
+        LOGGER.error(f"[Error] [{exc.status_code}] {exc.detail}")
+
         return JSONResponse(
             status_code=exc.status_code,
             content=FailureResponse(
                 code=exc.status_code,
-                data={"message": str(exc.detail)},
+                data={"message": str(exc.message)},
             ).model_dump(),  # .dict()를 사용해 객체를 딕셔너리로 변환
         )
 

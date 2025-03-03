@@ -2,7 +2,7 @@ from typing import Union
 from pydantic import BaseModel, Field, model_validator
 
 from app.schemas.systems import paginations as policy
-from app.constants.systems.status_code import StatusCode
+from app.common.constants.systems.codes import StatusCode
 
 class JSendResponse(BaseModel):
     status: StatusCode

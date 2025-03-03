@@ -9,6 +9,7 @@ from app.core.lifespan import lifespan
 from app.utils.middlewares.exception import (
     ClientErrorHandler, DatabaseErrorHandler, ServerErrorHandler
 )
+from app.common.exceptions.base import ProjectException
 app = FastAPI(
     title=AppConfig.APP_NAME,
     version=AppConfig.APP_VERSION,
@@ -19,6 +20,7 @@ app = FastAPI(
 def main():
     return {"message": "Hello, FastAPI!"}
 
+app.add_exception_handler(ProjectException, ClientErrorHandler.handle)
 app.add_exception_handler(SQLAlchemyError, DatabaseErrorHandler.handle)
 app.add_exception_handler(HTTPException, ClientErrorHandler.handle)
 app.add_exception_handler(Exception, ServerErrorHandler.handle)

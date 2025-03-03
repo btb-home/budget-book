@@ -1,11 +1,16 @@
-from sqlalchemy import Column, Integer, String, Date
+from sqlalchemy import Column, String, DateTime, Boolean
 
 from app.models.base import ModelBase
 
 
 class UserAccount(ModelBase):
-    _id = Column(Integer, autoincrement=True)  # 고유 ID
-    
-    id = Column(String, primary_key=True)  # 사용자 ID
-    name = Column(String)  # 사용자 이름
-    password = Column(String)  # 사용자 비밀번호
+    id = Column(String, primary_key=True, comment="ID")
+    name = Column(String, comment="이름")
+    password = Column(String, comment="비밀번호")
+
+    admin_role_yn = Column(Boolean, default=False, comment="관리자 역할 여부")
+    last_login_dttm = Column(DateTime, nullable=True, comment="마지막 로그인 일시")
+    last_login_ip = Column(String, nullable=True, comment="마지막 로그인 IP")
+
+# PySchema
+import app.schemas.users.accounts

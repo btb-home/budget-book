@@ -1,11 +1,11 @@
 from typing import List
 
 from pydantic import BaseModel as PySchema
-from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
 
 from app.core.logger import LOGGER
 from app.models.base import ModelBase
+from app.common.exceptions.database import NoResultFound
 
 def insert(db: Session, model_cls: ModelBase, schema_cls: PySchema) -> PySchema:
     """
@@ -23,7 +23,8 @@ def insert(db: Session, model_cls: ModelBase, schema_cls: PySchema) -> PySchema:
         db.flush()
         db.refresh(stmt)
 
-        LOGGER.info(f"Insert: ({model_cls.__tablename__}), Data={data}, Upsert={upsert}")
+        LOGGER.info (f"[   DB] Insert: ({model_cls.__tablename__})")
+        LOGGER.debug(f"[   DB] Insert: ({model_cls.__tablename__}), Data={data}, Upsert={upsert}")
 
         res_dict = stmt
         return schema_cls.model_validate(res_dict.__dict__)
@@ -39,11 +40,12 @@ def update(db: Session, model_cls: ModelBase, schema_cls: PySchema) -> PySchema:
 
         stmt = db.query(model_cls).filter(*query_filters)
 
-        LOGGER.info(f"Update: ({model_cls.__tablename__}), Filters={key}")
+        LOGGER.info (f"[   DB] Update: ({model_cls.__tablename__})")
+        LOGGER.debug(f"[   DB] Update: ({model_cls.__tablename__}), Data={data}, Filters={key}")
 
         res = stmt.first()
 
-        if res is None:
+        if not res:
             raise NoResultFound("Data not found")
 
         update_data = data.model_dump(exclude_unset=True)
@@ -78,9 +80,8 @@ def select_all(db: Session, model_cls: ModelBase, schema_cls: PySchema) -> List[
             .offset(offset)
         )
 
-        LOGGER.info(
-            f"Select: ({model_cls.__tablename__}) Filters={query}, OrderBy={orderby}, ASC={asc}, Limit={limit}, Offset={offset}"
-        )
+        LOGGER.info (f"[   DB] Select: ({model_cls.__tablename__})")
+        LOGGER.debug(f"[   DB] Select: ({model_cls.__tablename__}), OrderBy={orderby}, ASC={asc}, Limit={limit}, Offset={offset}")
 
         res = stmt.all()
         return [schema_cls.model_validate(r.__dict__) for r in res]
@@ -98,11 +99,10 @@ def select_one(db: Session, model_cls: ModelBase, schema_cls: PySchema) -> PySch
             query=query, orderby="creation_dttm", asc=True, limit=1, offset=0
         )
 
-        if not result:
-            LOGGER.warning(f"Data not found: ({model_cls.__tablename__}) Filters={query}")
-            raise NoResultFound("Data not found")
+        if result:
+            return result[0]
 
-        return result[0]
+        return None
 
     return _inner
 
@@ -114,7 +114,8 @@ def exists(db: Session, model_cls: ModelBase) -> bool:
         query_filters = [getattr(model_cls, col) == val for col, val in query.items()]
         stmt = db.query(model_cls).filter(*query_filters)
 
-        LOGGER.info(f"Exists: Table={model_cls.__tablename__}, Filters={query}")
+        LOGGER.info (f"[   DB] Exists: ({model_cls.__tablename__})")
+        LOGGER.debug(f"[   DB] Exists: ({model_cls.__tablename__}), query={query}")
 
         return db.query(stmt.exists()).scalar()
 
@@ -129,7 +130,8 @@ def delete(db: Session, model_cls: ModelBase) -> None:
 
         stmt = db.query(model_cls).filter(*query_filters)
 
-        LOGGER.info(f"Delete: Table={model_cls.__tablename__}, Filters={key}")
+        LOGGER.info (f"[   DB] Delete: ({model_cls.__tablename__})")
+        LOGGER.debug(f"[   DB] Delete: ({model_cls.__tablename__}), Filters={key}")
 
         res = stmt.first()
 

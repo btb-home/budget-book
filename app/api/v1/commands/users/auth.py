@@ -1,3 +1,5 @@
+# api/v1/commands/users/auth.py
+
 from fastapi import APIRouter, Path, Body
 from fastapi.responses import Response
 
@@ -14,6 +16,8 @@ async def sign_in_account(
     user_signin_req: py_schema.UserSingIn = Body(...),
 ) -> Response:
     
+    data = await svc.auth(user_signin_req)
+    input(f"{data=}")
     data = await svc.sign_in(user_signin_req)
 
     return ActionResponse(

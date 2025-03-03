@@ -6,6 +6,30 @@ from app.core.logger import LOGGER
 from app.core.databases import redis_db
 from app.utils.database.basic import select_one, insert
 from sqlalchemy.orm.session import Session
+import app.common.exceptions.business as biz_exc
+import app.common.exceptions.database as db_exc
+
+@connectional
+async def auth(
+    user_signin_req: UserSingIn,
+    db_session: Session,
+) -> bool:
+    """
+    사용자가 로그인할 때, 사용자 계정 정보를 데이터베이스에서 조회하여 인증.
+    """
+    data = select_one(db_session, UserAccount, UserAccountRes)(query={
+        UserAccount.id.name: user_signin_req.id,
+        UserAccount.password.name: user_signin_req.password,
+    })
+
+    if not data:
+        raise biz_exc.UserNotFoundException("User Account Not Found")
+
+    res_data = data.to_res()
+    LOGGER.info(f"User Account Fetched: {res_data}")
+    
+    return res_data
+
 
 # 로그인 기능 (Sign-in)
 @connectional
@@ -28,7 +52,7 @@ async def sign_in(
     LOGGER.info(f"User Account Fetched: {res_data}")
 
     # 세션 생성
-    session_id = await create_session(res_data.to_dict())
+    session_id = await create_session(res_data.model_dump())
     LOGGER.info(f"Generated session with ID: {session_id}")
     
     return session_id
@@ -61,4 +85,29 @@ async def check_in(
     decoded_token = await check_session(user_check_in.session_id)
     LOGGER.info(f"Session Checked: {decoded_token}")
     
+    cursor, keys = redis_db.scan(cursor=0, match='*', count=10)  # match로 필터링 가능
+    cursor = 0
+    print("==== Redis Keys and Values ====")
+
+    while True:
+        cursor, keys = redis_db.scan(cursor=cursor, match='session_*', count=10)
+        
+        for key in keys:
+            # 키 출력
+            key_str = key.decode('utf-8')
+            print(f"Key: {key_str}")
+            
+            # 값 조회
+            value = redis_db.get(key_str)  # 문자열 키의 경우 get 사용
+            if value:
+                value_str = value.decode('utf-8')
+                print(f"Value: {value_str}")
+            else:
+                print(f"Value: None")
+        
+        if cursor == 0:  # cursor가 0으로 돌아오면 종료
+            break
+            
+    print("==== Redis Keys and Values ====")
+            
     return decoded_token
