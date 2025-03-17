@@ -7,6 +7,15 @@ from app.schemas.systems.responses import SuccessResponse, GetOneResponse, Failu
 router = APIRouter()
 
 
+@router.get("/health", response_model=GetOneResponse)
+async def get_normal_response_test() -> Response:
+
+    data = {"status": "ok"}
+
+    return SuccessResponse(
+        data=data,
+    )
+    
 @router.get("/normal", response_model=GetOneResponse)
 async def get_normal_response_test() -> Response:
 
