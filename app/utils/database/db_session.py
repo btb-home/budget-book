@@ -1,17 +1,18 @@
 # utils/database/session.py
 
 from contextvars import ContextVar
-from sqlalchemy.orm.session import Session
+
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm.session import Session
+
 from app.core.databases import engine
 
 # 동기 세션 메이커
-SyncSessionMaker = sessionmaker(
-    bind=engine, class_=Session, expire_on_commit=False
-)
+SyncSessionMaker = sessionmaker(bind=engine, class_=Session, expire_on_commit=False)
 
 # 세션 컨텍스트 변수
 db_session_context = ContextVar("db_session", default=None)
+
 
 def get_sync_session() -> Session:
     """

@@ -1,7 +1,8 @@
 import asyncio
+
+from app.common.exceptions.systems import RedisInitDataException, RedisSystemException
 from app.core.logger import LOGGER
 from app.utils.database.redis import redis_client
-from app.common.exceptions.systems import RedisSystemException, RedisInitDataException
 
 
 async def init_redis_data():

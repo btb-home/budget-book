@@ -1,26 +1,26 @@
 # api/v1/commands/users/auth.py
 
-from fastapi import APIRouter, Body, Request
+from fastapi import APIRouter, Body, Depends, Request
 from fastapi.responses import Response
 
+import app.schemas.users.accounts as py_schema
+import app.services.commands.accounts as svc
+from app.core.logger import LOGGER
 from app.schemas.systems.responses import (
     ActionResponse,
-    SuccessResponse,
-    GetOneResponse,
     GetListResponse,
-)
-import app.services.commands.accounts as svc
-import app.schemas.users.accounts as py_schema
-from app.services.middlewares.sessions import (
-    set_session,
-    delete_session,
-    get_session_id,
-    get_session_data,
+    GetOneResponse,
+    SuccessResponse,
 )
 from app.schemas.users.sessions import UserSessionData
-from app.services.middlewares.sessions import get_session_storage, RedisSessionStorage
-from fastapi import Depends
-from app.core.logger import LOGGER
+from app.services.middlewares.sessions import (
+    RedisSessionStorage,
+    delete_session,
+    get_session_data,
+    get_session_id,
+    get_session_storage,
+    set_session,
+)
 
 router = APIRouter()
 
@@ -37,23 +37,20 @@ async def sign_in_account(
 
         session_data = UserSessionData.create(user_res)
         session_id = set_session(response, session_data, session_storage, session_id)
-        
+
         response.set_cookie("session_id", session_id, httponly=True)
         LOGGER.info(f"[  App] User({user_res.id}) - 세션 {session_id} 생성")
 
         return ActionResponse(message=f"로그인 성공")
     except Exception as e:
         LOGGER.error(f"[  App] 로그인 실패: {e}")
-        
+
         response.set_cookie("session_id", session_id, httponly=True)
         session_data = UserSessionData.create_guest()
-        session_id = set_session(response, session_data, session_storage, session_id) 
+        session_id = set_session(response, session_data, session_storage, session_id)
 
         return ActionResponse(
-            status="failure",
-            status_code=400,
-            code=400,
-            message=f"로그인 실패: {e}"
+            status="failure", status_code=400, code=400, message=f"로그인 실패: {e}"
         )
 
 

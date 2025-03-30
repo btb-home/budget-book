@@ -1,7 +1,9 @@
 import os
-import rootdir
 from pathlib import Path
+
+import rootdir
 from dotenv import load_dotenv
+
 
 class Setting:
     __root__: str = rootdir.root_dir(__file__)
@@ -23,12 +25,13 @@ class Setting:
 
         return cls()
 
+
 setting = Setting.load_env()
 
-class AppConfig:
-    """config for the app
 
-    """
+class AppConfig:
+    """config for the app"""
+
     APP_NAME: str = os.environ["APP_NAME"]
     APP_VERSION: str = os.environ["APP_VERSION"]
     APP_ENVIRONMENT: str = os.environ["APP_ENVIRONMENT"]
@@ -36,10 +39,10 @@ class AppConfig:
     ROOT_DIR: Path = os.environ["ROOT_DIR"]
     APP_ROOT_DIR: Path = os.environ["APP_ROOT_DIR"]
     APP_LOG_LEVEL: str = os.environ["APP_LOG_LEVEL"]
-    
+
     # Uvicorn Config
     UVICORN_LOG_LEVEL: str = os.environ["UVICORN_LOG_LEVEL"]
-    
+
     # Redis Config
     REDIS_HOST: str = os.environ["REDIS_HOST"]
     REDIS_PORT: int = int(os.environ["REDIS_PORT"])
@@ -58,7 +61,7 @@ class AppConfig:
     SQLALCHEMY_DATABASE_HOST: str = os.environ["SQLALCHEMY_DATABASE_HOST"]
     SQLALCHEMY_DATABASE_PORT: int = int(os.environ["SQLALCHEMY_DATABASE_PORT"])
     SQLALCHEMY_DATABASE_DBNAME: str = os.environ["SQLALCHEMY_DATABASE_DBNAME"]
-    
+
     # SESSION
     SESSION_SECRET_KEY: str = os.environ["SESSION_SECRET_KEY"]
     SESSION_ALGORITHM: str = os.environ["SESSION_ALGORITHM"]

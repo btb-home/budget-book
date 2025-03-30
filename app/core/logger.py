@@ -1,4 +1,5 @@
 import logging
+
 from app.core.configs import AppConfig
 
 logging.basicConfig(level=AppConfig.APP_LOG_LEVEL)

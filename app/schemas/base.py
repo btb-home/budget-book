@@ -1,5 +1,6 @@
-from pydantic import BaseModel
 from typing import Any, Dict
+
+from pydantic import BaseModel
 
 
 class ReqBase(BaseModel):

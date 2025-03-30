@@ -1,11 +1,12 @@
 import json
-from typing import Dict, Optional, Any
-from uuid import uuid4
+import pickle
 from datetime import datetime
+from typing import Any, Dict, Optional
+from uuid import uuid4
+
 from app.core.configs import AppConfig
 from app.core.databases import redis_db
 from app.schemas.users.sessions import UserSessionData
-import pickle
 
 
 class RedisSessionStorage:
@@ -25,7 +26,9 @@ class RedisSessionStorage:
         세션 만료 시간을 설정하여 저장.
         """
         pkl = pickle.dumps(value, protocol=pickle.HIGHEST_PROTOCOL)
-        self.client.set(key, pkl, ex=AppConfig.SESSION_EXPIRE_MINUTES)  # 데이터를 Redis에 저장하고 만료 시간 설정
+        self.client.set(
+            key, pkl, ex=AppConfig.SESSION_EXPIRE_MINUTES
+        )  # 데이터를 Redis에 저장하고 만료 시간 설정
 
     def __delitem__(self, key: str):
         """
@@ -40,7 +43,12 @@ class RedisSessionStorage:
         """
         return f"session:{uuid4().hex}"  # 새 세션 ID를 생성하여 반환
 
-    def refresh(self, session_id: str, session_data: UserSessionData, expire_min: int = AppConfig.SESSION_EXPIRE_MINUTES) -> None:
+    def refresh(
+        self,
+        session_id: str,
+        session_data: UserSessionData,
+        expire_min: int = AppConfig.SESSION_EXPIRE_MINUTES,
+    ) -> None:
         """
         주어진 세션 ID와 데이터를 사용하여 세션 만료 시간을 갱신.
         """

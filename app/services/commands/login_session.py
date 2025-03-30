@@ -1,11 +1,14 @@
-import jwt
 import datetime
-from uuid import uuid4
 from typing import Optional
+from uuid import uuid4
+
+import jwt
+from fastapi import HTTPException, status
+
+from app.common.middlewares.exception import SessionException
 from app.core.configs import AppConfig
 from app.core.databases import redis_db
-from fastapi import HTTPException, status
-from app.common.middlewares.exception import SessionException
+
 
 # JWT 토큰 생성 함수
 def create_access_token(
@@ -40,9 +43,6 @@ async def create_session(user_signin_req: dict) -> str:
     redis_db.set(session_id, access_token, ex=3600)
 
     return session_id
-
-
-
 
 
 # 세션 관리: 세션 확인 (Check-in)

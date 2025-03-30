@@ -3,14 +3,16 @@ from fastapi.exceptions import HTTPException
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import InvalidRequestError, NoResultFound, SQLAlchemyError
 
-from app.core.logger import LOGGER
-from app.schemas.systems.responses import FailureResponse, ErrorResponse
 from app.common.exceptions.base import ProjectException
+from app.core.logger import LOGGER
+from app.schemas.systems.responses import ErrorResponse, FailureResponse
+
 
 class SessionException(HTTPException):
     def __init__(self, status_code: int, detail: str):
         super().__init__(status_code=status_code, detail=detail)
-        
+
+
 class ClientErrorHandler:
     @staticmethod
     async def handle(request: Request, exc: HTTPException):
@@ -23,7 +25,8 @@ class ClientErrorHandler:
                 data={"message": str(exc.message)},
             ).model_dump(),  # .dict()를 사용해 객체를 딕셔너리로 변환
         )
-        
+
+
 class ProjectErrorHandler:
     @staticmethod
     async def handle(request: Request, exc: ProjectException):
@@ -36,8 +39,6 @@ class ProjectErrorHandler:
                 data={"message": str(exc.message)},
             ).model_dump(),  # .dict()를 사용해 객체를 딕셔너리로 변환
         )
-        
-    
 
 
 class ServerErrorHandler:

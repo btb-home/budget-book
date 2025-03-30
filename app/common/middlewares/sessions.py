@@ -1,20 +1,21 @@
-from fastapi import Request
-from starlette.middleware.base import BaseHTTPMiddleware
-from app.utils.database.sessions import RedisSessionStorage
-from app.schemas.users.sessions import UserSessionData
 import json
-from app.core.configs import AppConfig
-from app.core.logger import LOGGER
-from fastapi import HTTPException
-from app.common.middlewares.exception import ProjectErrorHandler
-from app.common.exceptions.business import SessionException
+from uuid import uuid4
+
+from fastapi import HTTPException, Request
+from starlette.middleware.base import BaseHTTPMiddleware
+
 from app.common.exceptions.business import (
-    SessionNotFoundException,
+    SessionException,
     SessionExpiredException,
     SessionGuestBannedException,
+    SessionNotFoundException,
 )
+from app.common.middlewares.exception import ProjectErrorHandler
+from app.core.configs import AppConfig
+from app.core.logger import LOGGER
+from app.schemas.users.sessions import UserSessionData
 from app.services.middlewares.sessions import set_session
-from uuid import uuid4
+from app.utils.database.sessions import RedisSessionStorage
 
 
 class SessionMiddleware(BaseHTTPMiddleware):
@@ -35,15 +36,15 @@ class SessionMiddleware(BaseHTTPMiddleware):
         # API 문서 페이지와 로그인 API는 세션 검사를 하지 않습니다.
         if self.is_signin_path(request.url.path):
             response = await call_next(request)
-            
+
             return response
 
         if self.is_excluded_path(request.url.path):
             response = await call_next(request)
-            response.set_cookie("session_id", session_id, httponly=True)            
-            
+            response.set_cookie("session_id", session_id, httponly=True)
+
             return response
-        
+
         try:
             session_data = await self.get_session_data(request, session_storage)
             # 게스트 사용자 차단
@@ -66,7 +67,7 @@ class SessionMiddleware(BaseHTTPMiddleware):
             return response
 
         except SessionException as e:
-            
+
             return await ProjectErrorHandler.handle(request, e)
 
     def is_signin_path(self, path: str) -> bool:
@@ -75,15 +76,13 @@ class SessionMiddleware(BaseHTTPMiddleware):
         """
         return path.endswith("/sign-in")
 
-
     def is_excluded_path(self, path: str) -> bool:
         """
         세션 검사를 제외할 경로를 체크하는 함수.
         """
         excluded_paths = ["/openapi.json", "/docs"]
         return any(path.endswith(excluded_path) for excluded_path in excluded_paths)
-    
-    
+
     async def get_session_data(
         self, request: Request, session_storage: RedisSessionStorage
     ) -> UserSessionData:
@@ -95,7 +94,9 @@ class SessionMiddleware(BaseHTTPMiddleware):
 
         return session_data
 
-    async def create_guest_session_id(self, request: Request, session_storage: RedisSessionStorage) -> str:
+    async def create_guest_session_id(
+        self, request: Request, session_storage: RedisSessionStorage
+    ) -> str:
         """
         비회원 세션을 생성하는 함수.
         """

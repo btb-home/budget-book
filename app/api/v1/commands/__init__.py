@@ -30,7 +30,9 @@ def include_routers(base_path: Path, tag: str = None):
                 router.include_router(
                     module.router,
                     prefix=f"/{item.parent.name}/{item.stem}",
-                    tags=[f"command:{tag.upper()}"],  # Use the provided tag for the router
+                    tags=[
+                        f"command:{tag.upper()}"
+                    ],  # Use the provided tag for the router
                 )
 
 

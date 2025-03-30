@@ -1,6 +1,6 @@
+import importlib
 import os
 import sys
-import importlib
 
 
 def import_py_files(package_dir, package_name):

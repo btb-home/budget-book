@@ -3,10 +3,9 @@ from typing import List
 from pydantic import BaseModel as PySchema
 from sqlalchemy.orm import Session
 
+from app.common.exceptions.data import DuplicateDataException, NoResultFound
 from app.core.logger import LOGGER
 from app.models.base import ModelBase
-from app.common.exceptions.data import NoResultFound
-from app.common.exceptions.data import DuplicateDataException
 
 
 def insert(db: Session, model_cls: ModelBase, schema_cls: PySchema) -> PySchema:
@@ -27,7 +26,7 @@ def insert(db: Session, model_cls: ModelBase, schema_cls: PySchema) -> PySchema:
         # 기존 데이터 존재 여부 확인
         existing_data = db.query(model_cls).filter_by(**data.model_dump()).first()
         if not upsert and existing_data:
-            # Upsert가 아닌데, 데이터가 이미 존재하는 경우 
+            # Upsert가 아닌데, 데이터가 이미 존재하는 경우
             # Dup 오류 발생
             raise DuplicateDataException(db_session_id)
 

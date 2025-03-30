@@ -1,70 +1,94 @@
 import json
 import time
 from uuid import uuid4
-from fastapi import Request, Response
+
+from fastapi import BackgroundTasks, Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
-from typing import AsyncIterator
-from app.core.logger import LOGGER
-from app.schemas.systems.logs import LogRecord, RequestLog, ResponseLog
+
 from app.common.constants.headers import X_CORRELATION_ID, X_PROCESS_TIME
+from app.core.logger import LOGGER
+
 
 class LoggingMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
-        correlation_id = request.headers.get(X_CORRELATION_ID, uuid4().hex)
-        start_time = time.time()
-        request.state.correlation_id = correlation_id
+        # 요청 시작 시간과 Correlation ID 설정
+        request.state.start_time = time.time()
+        request.state.correlation_id = request.headers.get(
+            X_CORRELATION_ID, uuid4().hex
+        )
 
-        response: Response = await call_next(request)
-        response.headers[X_CORRELATION_ID] = correlation_id
-        response.headers[X_PROCESS_TIME] = f"{time.time() - start_time:.4f} sec"
+        # 응답 처리
+        response = await call_next(request)
+        process_time = f"{(time.time() - request.state.start_time):.3f} sec"
 
-        log_record = await self._log_request_response(request, response)
-        LOGGER.info(json.dumps(log_record, ensure_ascii=False))
+        # 응답 본문 읽기
+        response_body = await self._capture_response_body(response)
 
-        return response
+        # 응답 헤더에 추가 정보 삽입
+        response.headers[X_PROCESS_TIME] = process_time
+        response.headers[X_CORRELATION_ID] = request.state.correlation_id
 
-    async def _log_request_response(self, request: Request, response: Response) -> dict:
-        request_body = await self._get_request_body(request)
-        response_body = await self._get_response_body(response)
+        # Background Task로 로깅
+        background_tasks = BackgroundTasks()
+        background_tasks.add_task(
+            self._log_request_response, request, response, process_time, response_body
+        )
+        response.background = background_tasks
 
-        return LogRecord(
-            event="application",
-            endpoint=request.url.path,
-            x_correlation_id=response.headers[X_CORRELATION_ID],
-            process_time_ms=response.headers[X_PROCESS_TIME],
-            request=RequestLog(
-                method=request.method,
-                endpoint=request.url.path,
-                headers=None,  # 헤더 제외
-                client=request.client.host,
-                query_params=request.query_params,
-                path_params=request.path_params,
-                body=request_body,
-            ).model_dump(),
-            response=ResponseLog(
-                status_code=response.status_code,
-                body=response_body,
-            ).model_dump(),
-        ).model_dump()
+        return Response(
+            content=response_body,
+            status_code=response.status_code,
+            headers=response.headers,
+            media_type=response.media_type,
+            background=background_tasks,
+        )
 
-
-    async def _get_request_body(self, request: Request) -> dict | None:
-        if request.method in ["POST", "PUT", "PATCH"]:
-            try:
-                return await request.json()
-            except json.JSONDecodeError:
-                pass
-        return None
-
-
-    async def _get_response_body(self, response: Response) -> str | None:
-        response_body = b""
-        async for chunk in response.body_iterator:
-            response_body += chunk
+    async def _capture_response_body(self, response: Response) -> str:
+        """응답 본문을 비동기적으로 읽어 반환"""
+        response_body = b"".join([chunk async for chunk in response.body_iterator])
 
         # 비동기 이터레이터 복원
-        async def _async_iter(data: bytes) -> AsyncIterator[bytes]:
+        async def _async_iter(data: bytes):
             yield data
 
         response.body_iterator = _async_iter(response_body)
-        return response_body.decode() if response_body else None
+        return response_body.decode() if response_body else ""
+
+    async def _log_request_response(
+        self,
+        request: Request,
+        response: Response,
+        process_time: str,
+        response_body: str,
+    ):
+        """요청 및 응답을 로깅"""
+        request_body = await self._get_request_body(request)
+
+        LOGGER.info(
+            {
+                "event": "application",
+                "endpoint": request.url.path,
+                "x_correlation_id": request.state.correlation_id,
+                "process_time": process_time,
+                "request": {
+                    "method": request.method,
+                    "client": request.client.host,
+                    "query_params": dict(request.query_params),
+                    "path_params": request.path_params,
+                    "body": request_body,
+                },
+                "response": {
+                    "status_code": response.status_code,
+                    "body": response_body,
+                },
+            }
+        )
+
+    async def _get_request_body(self, request: Request) -> dict | None:
+        """요청 본문 추출"""
+        try:
+            if request.method in ["POST", "PUT", "PATCH"]:
+                return await request.json()
+        except json.JSONDecodeError:
+            pass
+        return None

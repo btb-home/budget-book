@@ -1,12 +1,14 @@
 import re
-from typing import Type
-from pydantic import BaseModel as PySchema
 from datetime import datetime
+from typing import Type
+
+from pydantic import BaseModel as PySchema
 from sqlalchemy import Column, DateTime, String
 from sqlalchemy.ext.declarative import declarative_base, declared_attr
 
 # Base class for SQLAlchemy models
 moduleBase = declarative_base()
+
 
 class ModelBase(moduleBase):
     __abstract__ = True
@@ -47,20 +49,24 @@ class ModelBase(moduleBase):
         Convert the SQLAlchemy model instance to a Pydantic model instance.
         """
         data = {
-            column.name: getattr(self, column.name)
-            for column in self.__table__.columns
+            column.name: getattr(self, column.name) for column in self.__table__.columns
         }
         return schema_cls(**data)
-    
+
     def __str__(self):
         """String representation of the model instance."""
-        attrs = [attr for attr in dir(self) if not callable(getattr(self, attr)) and not attr.startswith("__")]
+        attrs = [
+            attr
+            for attr in dir(self)
+            if not callable(getattr(self, attr)) and not attr.startswith("__")
+        ]
         attr_str = ", ".join([f"{attr}={getattr(self, attr)}" for attr in attrs])
         return f"{self.__class__.__name__}({attr_str})"
 
     def __repr__(self):
         """Representation of the model instance."""
         return f"<{self.__class__.__name__}>"
+
 
 def _pascal_to_snake(input_string: str):
     """Convert PascalCase to snake_case."""

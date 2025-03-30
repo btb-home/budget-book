@@ -1,12 +1,14 @@
-from typing import Optional, Dict, Any
+from typing import Any, Dict, Optional
+
 from pydantic import BaseModel, Field, SecretStr
+
 from app.schemas.base import ReqBase, ResBase
 
 
 class UserAccessLogBase(BaseModel):
     user_id: str = Field(..., title="사용자 ID")
     user_name: str = Field(..., title="사용자 이름")
-    
+
     client_ip: str = Field(..., title="클라이언트 IP")
     request_method_type: str = Field(..., title="요청 메소드 타입")
     request_url: str = Field(..., title="요청 URL")
@@ -18,10 +20,9 @@ class UserAccessLogBase(BaseModel):
         return UserAccessLogRes(**res_data)
 
 
-    
 class UserAccessLogRes(UserAccessLogBase, ResBase):
     pass
 
+
 class UserAccessLogReq(UserAccessLogBase, ReqBase):
     pass
-

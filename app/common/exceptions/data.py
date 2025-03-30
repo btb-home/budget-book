@@ -1,7 +1,8 @@
 from fastapi import status
 from sqlalchemy.exc import NoResultFound
-from app.common.exceptions.base import DataException
+
 from app.common.constants.systems import exc_msg
+from app.common.exceptions.base import DataException
 
 
 class NoResultFound(NoResultFound):

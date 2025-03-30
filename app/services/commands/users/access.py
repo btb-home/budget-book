@@ -1,12 +1,14 @@
 from fastapi import Request
+from sqlalchemy.orm.session import Session
+
+from app.core.databases import redis_db
+from app.core.logger import LOGGER
 from app.schemas.users.access import UserAccessLogReq
 from app.schemas.users.sessions import UserSessionData
-from app.utils.database.decorator import transactional
-from app.core.logger import LOGGER
-from app.core.databases import redis_db
-from app.utils.database.basic import select_one, insert
-from sqlalchemy.orm.session import Session
 from app.services.commands.clients_ip import get_client_ip
+from app.utils.database.basic import insert, select_one
+from app.utils.database.decorator import transactional
+
 
 # @transactional
 async def save_access_log(
@@ -20,7 +22,7 @@ async def save_access_log(
     """
     if session:
         print(f"{session}, {type(session)}")
-        
+
     if session and not str(request.url).endswith("/sign-in"):
         pass
         # user_log_req = UserAccessLogReq(
@@ -31,11 +33,11 @@ async def save_access_log(
         #     request_url=request.url.components.path,
         #     request_body=request_body
         # )
-    
+
         # print("============")
         # print(user_log_req)
         # print("============")
     else:
         print("============")
         print(f"세션 정보가 없습니다.")
-        print("============")        
+        print("============")

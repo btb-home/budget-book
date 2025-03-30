@@ -2,23 +2,26 @@
 
 import json
 from pathlib import Path
-from app.models.base import ModelBase
+
+from sqlalchemy.orm.session import Session
+
+from app.common.exceptions.data import DuplicateDataException
+from app.core.configs import AppConfig
 from app.core.databases import engine
 from app.core.logger import LOGGER
-from app.schemas.users.accounts import UserAccountReq
+from app.models.base import ModelBase
 from app.models.users.accounts import UserAccount
-from app.utils.database.basic import insert
-from app.common.exceptions.data import DuplicateDataException
+from app.schemas.users.accounts import UserAccountReq
 from app.utils.common.files import read_file
-from app.core.configs import AppConfig
-from sqlalchemy.orm.session import Session
+from app.utils.database.basic import insert
 from app.utils.database.decorator import transactional
+
 
 async def init_database_data():
     """
     데이터베이스 초기화 작업을 수행하는 함수입니다.
 
-    이 함수는 데이터베이스 테이블을 생성하고, 초기 데이터를 로드하여 
+    이 함수는 데이터베이스 테이블을 생성하고, 초기 데이터를 로드하여
     `UserAccount` 테이블에 데이터를 삽입하거나 업데이트하는 작업을 수행합니다.
 
     초기화 작업은 트랜잭션 내에서 진행되며, 오류 발생 시 롤백됩니다.
@@ -31,13 +34,14 @@ async def init_database_data():
         # 데이터베이스 초기 데이터 로드 및 삽입
         await init_db_data("common", "user_account")
         LOGGER.info("[   DB] 데이터베이스 데이터 초기 세팅 완료")
-        
+
     except Exception as e:
         LOGGER.error(f"[   DB] 초기화 작업 중 오류 발생: {e}")
         raise e
 
+
 @transactional
-async def init_db_data(data_schema: str, name: str, db_session:Session):
+async def init_db_data(data_schema: str, name: str, db_session: Session):
     """
     데이터베이스 초기 데이터를 삽입합니다.
 
@@ -45,13 +49,15 @@ async def init_db_data(data_schema: str, name: str, db_session:Session):
     """
     try:
         user_accounts_data = load_initial_data(data_schema, name)
-        user_account = [UserAccountReq.model_validate(user) for user in user_accounts_data]
+        user_account = [
+            UserAccountReq.model_validate(user) for user in user_accounts_data
+        ]
 
         for data in user_account:
             # 비밀번호 필드 처리
             data.password = data.password.get_secret_value()
             _insert_user_account(db_session, data)
-            
+
     except Exception as e:
         LOGGER.error(f"[   DB] 데이터 초기화 실패: {e}")
         raise e
@@ -78,12 +84,14 @@ def load_initial_data(data_schema: str, name: str) -> list:
     :return: 로드된 데이터 리스트 또는 빈 리스트
     """
     resources_path = _get_resource_path(data_schema, name)
-    
+
     try:
         read_data = read_file(resources_path)
         return json.loads(read_data)
     except Exception as e:
-        LOGGER.error(f"[   DB] 초기 데이터 로드 실패: {e} - 파일 경로: {resources_path}")
+        LOGGER.error(
+            f"[   DB] 초기 데이터 로드 실패: {e} - 파일 경로: {resources_path}"
+        )
         return []
 
 
