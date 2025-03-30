@@ -3,7 +3,7 @@
 from fastapi import FastAPI, HTTPException
 from sqlalchemy.exc import SQLAlchemyError
 
-from app.api.routers import api_router
+from app.api.routers import routers
 from app.core.configs import AppConfig
 from app.core.lifespan import lifespan
 from app.common.middlewares.exception import (
@@ -39,17 +39,12 @@ app.add_exception_handler(SQLAlchemyError, DatabaseErrorHandler.handle)
 app.add_exception_handler(HTTPException, ClientErrorHandler.handle)
 app.add_exception_handler(Exception, ServerErrorHandler.handle)
 
-app.add_middleware(SessionMiddleware)
+# app.add_middleware(SessionMiddleware)
 app.add_middleware(LoggingMiddleware)
 app.add_middleware(HeaderMiddleware)
 
-
-app.include_router(router=api_router)
+app.include_router(router=routers)
 
 @app.get("/")
-def main():
-    return {"message": "Hello, FastAPI!"}
-
-@app.get("/api")
-def main2():
+async def health():
     return {"message": "Hello, FastAPI!"}

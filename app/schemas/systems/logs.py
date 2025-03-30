@@ -18,7 +18,7 @@ class RequestLog(BaseModel):
 
 class ResponseLog(BaseModel):
     status_code: int
-    headers: Dict[str, Any]
+    headers: Dict[str, Any] | None = None
     body: Optional[Dict[str, Any] | str] = None
 
     class Config:
@@ -26,8 +26,8 @@ class ResponseLog(BaseModel):
 
 
 class LogRecord(BaseModel):
+    event: str
     x_correlation_id: str
-    log_type: str
     endpoint: str
     request: Optional[Any]  # RequestInfo
     response: Optional[Any]  # ResponseInfo

@@ -1,72 +1,70 @@
 import json
 import time
+from uuid import uuid4
 from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
+from typing import AsyncIterator
 from app.core.logger import LOGGER
 from app.schemas.systems.logs import LogRecord, RequestLog, ResponseLog
+from app.common.constants.headers import X_CORRELATION_ID, X_PROCESS_TIME
 
 class LoggingMiddleware(BaseHTTPMiddleware):
-    LOG_LEVELS = {4: LOGGER.info, 5: LOGGER.error}
-
     async def dispatch(self, request: Request, call_next):
-        if not request.url.path.startswith("/api"):
-            return await call_next(request)
-
+        correlation_id = request.headers.get(X_CORRELATION_ID, uuid4().hex)
         start_time = time.time()
-        x_correlation_id = request.headers.get("X-Correlation-ID")
+        request.state.correlation_id = correlation_id
 
-        # 요청 정보를 수집하면서 민감한 정보 마스킹 처리
-        request_info = await self._collect_request_info(request)
-        response = await call_next(request)
-        response_info = await self._collect_response_info(response)
+        response: Response = await call_next(request)
+        response.headers[X_CORRELATION_ID] = correlation_id
+        response.headers[X_PROCESS_TIME] = f"{time.time() - start_time:.4f} sec"
 
-        process_time = self._calculate_process_time(start_time)
-        log_record = self._log_request_response(x_correlation_id, request.url.path, request_info, response_info, process_time)
-
-        log_func = self._get_log_function(response.status_code)
-        log_func(f"[  API/ {response.status_code}] {json.dumps(log_record, ensure_ascii=False)}")
+        log_record = await self._log_request_response(request, response)
+        LOGGER.info(json.dumps(log_record, ensure_ascii=False))
 
         return response
 
-    async def _collect_request_info(self, request: Request) -> RequestLog:
-        try:
-            # POST, PUT, PATCH 요청에서 body를 받아옴
-            request_body = await request.json() if request.method in ["POST", "PUT", "PATCH"] else None
-        except json.JSONDecodeError:
-            request_body = None
+    async def _log_request_response(self, request: Request, response: Response) -> dict:
+        request_body = await self._get_request_body(request)
+        response_body = await self._get_response_body(response)
 
-        return RequestLog(
-            method=request.method,
-            endpoint=str(request.url.path),
-            headers=dict(request.headers),
-            client=request.client.host,
-            query_params=dict(request.query_params),
-            path_params=dict(request.path_params),
-            body=request_body,
-        )
-
-    async def _collect_response_info(self, response: Response) -> ResponseLog:
-        response_body = getattr(response, "body", b"").decode() or None
-
-        return ResponseLog(
-            status_code=response.status_code,
-            headers=dict(response.headers),
-            body=response_body,
-        )
-    
-    def _get_log_function(self, status_code: int):
-        first_digit = status_code // 100
-        return self.LOG_LEVELS.get(first_digit, LOGGER.info)
-
-    def _log_request_response(self, x_correlation_id: str, endpoint: str, request_info: RequestLog, response_info: ResponseLog, process_time: str) -> LogRecord:
         return LogRecord(
-            x_correlation_id=x_correlation_id,
-            log_type="application",
-            endpoint=endpoint,
-            request=request_info.model_dump(exclude={"headers"}),  # headers 제외, body 제외
-            response=response_info.model_dump(exclude={"headers"}),  # headers 제외
-            process_time_ms=process_time,
+            event="application",
+            endpoint=request.url.path,
+            x_correlation_id=response.headers[X_CORRELATION_ID],
+            process_time_ms=response.headers[X_PROCESS_TIME],
+            request=RequestLog(
+                method=request.method,
+                endpoint=request.url.path,
+                headers=None,  # 헤더 제외
+                client=request.client.host,
+                query_params=request.query_params,
+                path_params=request.path_params,
+                body=request_body,
+            ).model_dump(),
+            response=ResponseLog(
+                status_code=response.status_code,
+                body=response_body,
+            ).model_dump(),
         ).model_dump()
-        
-    def _calculate_process_time(self, start_time: float) -> str:
-        return f"{(time.time() - start_time) * 1000:.3f} ms"
+
+
+    async def _get_request_body(self, request: Request) -> dict | None:
+        if request.method in ["POST", "PUT", "PATCH"]:
+            try:
+                return await request.json()
+            except json.JSONDecodeError:
+                pass
+        return None
+
+
+    async def _get_response_body(self, response: Response) -> str | None:
+        response_body = b""
+        async for chunk in response.body_iterator:
+            response_body += chunk
+
+        # 비동기 이터레이터 복원
+        async def _async_iter(data: bytes) -> AsyncIterator[bytes]:
+            yield data
+
+        response.body_iterator = _async_iter(response_body)
+        return response_body.decode() if response_body else None
