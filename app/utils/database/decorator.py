@@ -39,25 +39,27 @@ def transactional(func):
 
             commit_count = len(db_session.new)
             LOGGER.info(
-                f"[   DB] ({db_session_id}) 트랜잭션이 {commit_count}건 커밋되었습니다."
+                f"[   DB] {db_session_id} / 트랜잭션이 {commit_count}건 커밋되었습니다."
             )
         except SQLAlchemyError as e:
             if db_session:
                 db_session.rollback()
-                LOGGER.info(f"[   DB] ({db_session_id}) 트랜잭션 롤백됨 - 오류: {e}")
+                LOGGER.info(
+                    f"[   DB] {db_session_id} / 트랜잭션 롤백됨 - 오류: {e} ({db_session_id})"
+                )
             raise
         except Exception as e:
             if db_session:
                 db_session.rollback()
                 LOGGER.exception(
-                    f"[   DB] ({db_session_id}) 트랜잭션 롤백됨 - 오류: {e}"
+                    f"[   DB] {db_session_id} / 트랜잭션 롤백됨 - 오류: {e} ({db_session_id})"
                 )
             raise
         finally:
             if db_session:
                 db_session.close()
             db_session_context.set(None)
-            LOGGER.info(f"[   DB] ({db_session_id}) 세션이 종료되었습니다.")
+            LOGGER.info(f"[   DB] {db_session_id} / 세션이 종료되었습니다.")
 
         return result
 

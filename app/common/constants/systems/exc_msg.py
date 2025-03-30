@@ -10,6 +10,9 @@ SESSION_NOT_FOUND_EXCEPTION_MESSAGE = "세션을 찾을 수 없습니다."
 SESSION_EXPIRED_EXCEPTION_MESSAGE = "세션이 만료되었습니다."
 SESSION_GUEST_BANNED_EXCEPTION_MESSAGE = "게스트 사용자는 접근할 수 없습니다."
 
+DATA_EXCEPTION_MESSAGE = "Data Exception"
+DATA_DUPLICATION_EXCEPTION_MESSAGE = "중복된 데이터가 존재합니다."
+
 # System Exception
 SYS_TEST_EXCEPTION_MESSAGE = "System Test Exception"
 REDIS_SYSTEM_EXCEPTION_MESSAGE = "Redis System Exception"

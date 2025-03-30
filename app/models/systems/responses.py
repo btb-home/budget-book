@@ -3,7 +3,7 @@ from typing import Union
 from pydantic import BaseModel, Field, model_validator
 
 from app.common.constants.systems.codes import StatusCode
-from app.schemas.systems import paginations as policy
+from app.models.systems import paginations as policy
 
 
 class JSendResponse(BaseModel):

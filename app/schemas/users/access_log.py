@@ -1,6 +1,6 @@
 from sqlalchemy import Boolean, Column, DateTime, String
 
-from app.models.base import ModelBase
+from app.schemas.base import ModelBase
 
 
 class UserAccessLog(ModelBase):

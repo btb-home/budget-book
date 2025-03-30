@@ -12,6 +12,21 @@ class TestTeaPotException(BizException):
         self.detail = f"{self.message} - {detail}"
 
 
+# Data Exception
+class DataException(BizException):
+    def __init__(self, detail: str = ""):
+        self.status_code = status.HTTP_409_CONFLICT
+        self.message = exc_msg.DATA_EXCEPTION_MESSAGE
+        self.detail = detail
+
+
+class DataDuplicationException(DataException):
+    def __init__(self, detail: str = ""):
+        self.status_code = status.HTTP_409_CONFLICT
+        self.message = exc_msg.DATA_DUPLICATION_EXCEPTION_MESSAGE
+        self.detail = f"{detail} - {self.message}"
+
+
 class AuthenticationException(BizException):
     def __init__(self, detail: str, url: str = "/"):
         self.status_code = status.HTTP_401_UNAUTHORIZED

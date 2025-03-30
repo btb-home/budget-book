@@ -7,7 +7,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from app.common.constants.systems.exc_msg import SYSTEM_EXCEPTION_MESSAGE
 from app.common.exceptions.base import BizException, SysException
 from app.core.logger import LOGGER
-from app.schemas.systems.responses import JSendError, JSendFailure
+from app.models.systems.responses import JSendError, JSendFailure
 
 
 class ExceptionMiddleware(BaseHTTPMiddleware):

@@ -4,7 +4,7 @@ from fastapi.responses import Response
 
 from app.common.exceptions.biz import TestTeaPotException
 from app.common.exceptions.sys import TestSysException
-from app.schemas.systems.responses import (
+from app.models.systems.responses import (
     JSendError,
     JSendFailure,
     JSendResponse,

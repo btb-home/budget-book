@@ -1,26 +1,20 @@
-from datetime import date
-from typing import Optional
+from sqlalchemy import Column, Date, Integer, String
 
-from pydantic import BaseModel
-
-
-class LedgerExpenseBase(BaseModel):
-    transaction_date: date  # 거래일 (지출일자)
-    payment_method: str  # 결제 수단 (카드명)
-    expense_type: str  # 지출 카테고리
-    expense_detail_type: str = None  # 지출 세부 카테고리
-    expense_amount: int  # 지출 금액
-    expense_unit: str  # 지출 단위
-    expense_merchant_name: str  # 가맹점/거래처
-    note: Optional[str] = None  # 비고 (지출 내용) - 선택적 필드
+from app.schemas.base import ModelBase
 
 
-class LedgerExpenseCreate(LedgerExpenseBase):
-    pass
+class LedgerExpense(ModelBase):
+    id = Column(Integer, primary_key=True, autoincrement=True)  # 고유 ID
 
+    transaction_date = Column(Date, index=True)  # 거래일 (지출일자)
 
-class LedgerExpenseRes(LedgerExpenseBase):
-    id: int  # 고유 ID
+    payment_method = Column(String)  # 결제 수단 (카드명)
 
-    class Config:
-        from_attributes = True  # SQLAlchemy 모델과 호환되도록 설정
+    expense_type = Column(String)  # 지출 카테고리
+    expense_detail_type = Column(String)  # 지출 세부 카테고리
+
+    expense_amount = Column(Integer)  # 지출 금액
+    expense_unit = Column(String)  # 지출 단위
+    expense_merchant_name = Column(String)  # 가맹점/거래처
+
+    note = Column(String)  # 비고 (지출 내용)
