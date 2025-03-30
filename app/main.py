@@ -9,10 +9,12 @@ from app.common.middlewares.exception import ExceptionMiddleware
 from app.common.middlewares.headers import HeaderMiddleware
 from app.common.middlewares.logging import LoggingMiddleware
 from app.core.configs import AppConfig
+
 # from app.core.lifespan import lifespan
 
 app = FastAPI(
-    title=AppConfig.APP_NAME, version=AppConfig.APP_VERSION, 
+    title=AppConfig.APP_NAME,
+    version=AppConfig.APP_VERSION,
     # lifespan=lifespan
 )
 

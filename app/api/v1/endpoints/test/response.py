@@ -2,13 +2,14 @@ from fastapi import APIRouter, status
 from fastapi.exceptions import HTTPException
 from fastapi.responses import Response
 
+from app.common.exceptions.biz import TestTeaPotException
+from app.common.exceptions.sys import TestSysException
 from app.schemas.systems.responses import (
-    JSendResponse,
-    ErrorResponse,
+    JSendError,
     JSendFailure,
+    JSendResponse,
     JSendSuccess,
 )
-from app.common.exceptions.biz import TestTeaPotException
 
 router = APIRouter()
 
@@ -16,9 +17,7 @@ router = APIRouter()
 @router.get("/health")
 async def get_health_test() -> JSendResponse:
 
-    return JSendSuccess(
-        data={"status": "ok"}
-    )
+    return JSendSuccess(data={"status": "ok"})
 
 
 @router.get("/normal")
@@ -42,14 +41,33 @@ async def get_client_error_test() -> Response:
     return JSendSuccess(
         data={"status": "ok"},
     )
-    
+
 
 @router.get(
-    "/server-error",
+    "/system-error",
     status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-    response_model=ErrorResponse,
+    response_model=JSendError,
 )
 async def get_server_error_test() -> Response:
     """API-BKND-001 Get Module status"""
 
-    raise Exception("Test Exception")
+    raise TestSysException("Test Exception")
+
+    return JSendSuccess(
+        data={"status": "ok"},
+    )
+
+
+@router.get(
+    "/server-error",
+    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+    response_model=JSendError,
+)
+async def get_server_error_test() -> Response:
+    """API-BKND-001 Get Module status"""
+
+    raise ValueError("Test Exception")
+
+    return JSendSuccess(
+        data={"status": "ok"},
+    )

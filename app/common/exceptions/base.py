@@ -15,7 +15,7 @@ class BizException(ProjectException):
     detail = exc_msg.BUSINESS_EXCEPTION_MESSAGE
 
 
-class SystemException(ProjectException):
+class SysException(ProjectException):
     status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
     message = "System Exception"
     detail = exc_msg.SYSTEM_EXCEPTION_MESSAGE

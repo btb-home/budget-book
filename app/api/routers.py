@@ -7,4 +7,4 @@ routers = APIRouter(prefix="/api")
 routers.include_router(router=v1_router)
 
 routers.responses[400] = {"model": responses.JSendFailure}
-routers.responses[500] = {"model": responses.ErrorResponse}
+routers.responses[500] = {"model": responses.JSendError}

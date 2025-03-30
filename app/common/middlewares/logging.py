@@ -62,11 +62,11 @@ class LoggingMiddleware(BaseHTTPMiddleware):
                     "client": request.client.host,
                     "query_params": dict(request.query_params),
                     "path_params": request.path_params,
-                    "body": request_body,
+                    "body": self._shorten(request_body),
                 },
                 "response": {
                     "status_code": response.status_code,
-                    "body": response_body,
+                    "body": self._shorten(response_body),
                 },
             }
         )
@@ -79,3 +79,12 @@ class LoggingMiddleware(BaseHTTPMiddleware):
         except json.JSONDecodeError:
             pass
         return None
+
+    def _shorten(self, text: str, width: int = 100) -> str:
+        from textwrap import shorten
+
+        """요청 ID 생성"""
+        text = text or ""
+        placeholder = f"... {len(text) - width} more ..."
+
+        return shorten(text, width, placeholder=placeholder)

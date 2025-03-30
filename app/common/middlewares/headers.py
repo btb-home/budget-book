@@ -1,8 +1,15 @@
 import time
 from uuid import uuid4
+
 from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
-from app.common.constants.headers import X_CORRELATION_ID, X_FORWARDED_FOR, X_PROCESS_TIME
+
+from app.common.constants.headers import (
+    X_CORRELATION_ID,
+    X_FORWARDED_FOR,
+    X_PROCESS_TIME,
+)
+
 
 class HeaderMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):

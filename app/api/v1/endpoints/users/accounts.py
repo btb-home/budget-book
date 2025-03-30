@@ -3,11 +3,7 @@ from fastapi.responses import Response
 
 import app.schemas.users.accounts as py_schema
 import app.services.endpoints.users.accounts as svc
-from app.schemas.systems.responses import (
-    GetListResponse,
-    GetOneResponse,
-    JSendSuccess,
-)
+from app.schemas.systems.responses import GetListResponse, GetOneResponse, JSendSuccess
 
 router = APIRouter()
 

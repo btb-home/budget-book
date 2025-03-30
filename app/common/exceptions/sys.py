@@ -1,16 +1,17 @@
 from fastapi import status
 
 from app.common.constants.systems import exc_msg
-from app.common.exceptions.base import SystemException
+from app.common.exceptions.base import SysException
 
 
-class SysTestException(SystemException):
+class TestSysException(SysException):
     def __init__(self, detail: str = exc_msg.SYS_TEST_EXCEPTION_MESSAGE):
         self.status_code: int = status.HTTP_500_INTERNAL_SERVER_ERROR
-        self.message: str = "System Test Exception"
+        self.message: str = exc_msg.SYS_TEST_EXCEPTION_MESSAGE
         self.detail: str = detail
-        
-class RedisSystemException(SystemException):
+
+
+class RedisSystemException(SysException):
     def __init__(self, detail: str = exc_msg.REDIS_SYSTEM_EXCEPTION_MESSAGE):
         self.status_code: int = status.HTTP_500_INTERNAL_SERVER_ERROR
         self.message: str = "Redis System Exception"

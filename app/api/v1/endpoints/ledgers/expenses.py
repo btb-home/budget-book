@@ -4,11 +4,7 @@ from sqlalchemy.orm import Session
 
 import app.services.endpoints.ledgers.expenses as svc
 from app.schemas.ledgers.expenses import LedgerExpenseCreate
-from app.schemas.systems.responses import (
-    GetListResponse,
-    GetOneResponse,
-    JSendSuccess,
-)
+from app.schemas.systems.responses import GetListResponse, GetOneResponse, JSendSuccess
 from app.utils.database.db_session import get_sync_session
 
 router = APIRouter()

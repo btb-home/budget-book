@@ -54,9 +54,10 @@ class JSendFailure(JSendResponse):
         }
 
 
-class ErrorResponse(JSendResponse):
+class JSendError(JSendResponse):
     status: StatusCode = StatusCode.ERROR
     code: int = 500
+    data: str | dict | list | BaseModel | None = Field(None, exclude=True)
     message: str = "Internal Server Error"
 
     class Config:

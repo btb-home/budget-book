@@ -1,6 +1,6 @@
 PROJECT_EXCEPTION_MESSAGE = "PROJECT Exception"
 BUSINESS_EXCEPTION_MESSAGE = "Business Exception"
-SYSTEM_EXCEPTION_MESSAGE = "System Exception"
+SYSTEM_EXCEPTION_MESSAGE = "시스템 오류가 발생했습니다."
 DATA_EXCEPTION_MESSAGE = "Data Exception"
 
 # Bisiness Exception
@@ -11,6 +11,7 @@ SESSION_EXPIRED_EXCEPTION_MESSAGE = "세션이 만료되었습니다."
 SESSION_GUEST_BANNED_EXCEPTION_MESSAGE = "게스트 사용자는 접근할 수 없습니다."
 
 # System Exception
+SYS_TEST_EXCEPTION_MESSAGE = "System Test Exception"
 REDIS_SYSTEM_EXCEPTION_MESSAGE = "Redis System Exception"
 REDIS_INIT_DATA_EXCEPTION_MESSAGE = "데이터 초기화 중 오류 발생"
 
