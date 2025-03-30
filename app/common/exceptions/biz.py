@@ -11,11 +11,13 @@ class TestTeaPotException(BizException):
         self.message = exc_msg.TEST_TEAPOT_EXCEPTION_MESSAGE
         self.detail = f"{self.message} - {detail}"
 
+
 class AuthenticationException(BizException):
     def __init__(self, detail: str, url: str = "/"):
         self.status_code = status.HTTP_401_UNAUTHORIZED
         self.detail = detail
         self.url = url
+
 
 class UserAuthenticationFail(BizException):
     def __init__(self, detail: str = ""):
@@ -50,4 +52,3 @@ class SessionExpiredException(SessionException):
         self.status_code = status.HTTP_401_UNAUTHORIZED
         self.message = exc_msg.SESSION_EXPIRED_EXCEPTION_MESSAGE
         self.detail = f"{self.message} - {detail}"
-
