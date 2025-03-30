@@ -1,17 +1,23 @@
 from fastapi import status
 
 from app.common.constants.systems import exc_msg
-from app.common.exceptions.base import BusinessException
+from app.common.exceptions.base import BizException
 
 
-class AuthenticationException(BusinessException):
+# Test Exceptions
+class TestTeaPotException(BizException):
+    def __init__(self, detail: str = ""):
+        self.status_code = status.HTTP_418_IM_A_TEAPOT
+        self.message = exc_msg.TEST_TEAPOT_EXCEPTION_MESSAGE
+        self.detail = f"{self.message} - {detail}"
+
+class AuthenticationException(BizException):
     def __init__(self, detail: str, url: str = "/"):
         self.status_code = status.HTTP_401_UNAUTHORIZED
         self.detail = detail
         self.url = url
 
-
-class UserAuthenticationFail(BusinessException):
+class UserAuthenticationFail(BizException):
     def __init__(self, detail: str = ""):
         self.status_code = status.HTTP_404_NOT_FOUND
         self.message = exc_msg.USER_AUTHENTICATION_FAIL_MESSAGE
@@ -19,7 +25,7 @@ class UserAuthenticationFail(BusinessException):
 
 
 # Session Exceptions
-class SessionException(BusinessException):
+class SessionException(BizException):
     def __init__(self, detail: str = ""):
         self.status_code = status.HTTP_401_UNAUTHORIZED
         self.detail = detail
@@ -44,3 +50,4 @@ class SessionExpiredException(SessionException):
         self.status_code = status.HTTP_401_UNAUTHORIZED
         self.message = exc_msg.SESSION_EXPIRED_EXCEPTION_MESSAGE
         self.detail = f"{self.message} - {detail}"
+

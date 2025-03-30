@@ -3,45 +3,46 @@ from fastapi.exceptions import HTTPException
 from fastapi.responses import Response
 
 from app.schemas.systems.responses import (
+    JSendResponse,
     ErrorResponse,
-    FailureResponse,
-    GetOneResponse,
-    SuccessResponse,
+    JSendFailure,
+    JSendSuccess,
 )
+from app.common.exceptions.biz import TestTeaPotException
 
 router = APIRouter()
 
 
-@router.get("/health", response_model=GetOneResponse)
-async def get_normal_response_test() -> Response:
+@router.get("/health")
+async def get_health_test() -> JSendResponse:
 
-    data = {"status": "ok"}
-
-    return SuccessResponse(
-        data=data,
+    return JSendSuccess(
+        data={"status": "ok"}
     )
 
 
-@router.get("/normal", response_model=GetOneResponse)
+@router.get("/normal")
 async def get_normal_response_test() -> Response:
 
-    data = {"status": "ok"}
-
-    return SuccessResponse(
-        data=data,
+    return JSendSuccess(
+        data={"status": "ok"},
     )
 
 
 @router.get(
     "/client-error",
     status_code=status.HTTP_418_IM_A_TEAPOT,
-    response_model=FailureResponse,
+    response_model=JSendFailure,
 )
 async def get_client_error_test() -> Response:
     """API-BKND-001 Get Module status"""
 
-    raise HTTPException(418, "Test Exception")
+    raise TestTeaPotException("Test Exception")
 
+    return JSendSuccess(
+        data={"status": "ok"},
+    )
+    
 
 @router.get(
     "/server-error",

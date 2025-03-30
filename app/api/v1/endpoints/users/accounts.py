@@ -6,7 +6,7 @@ import app.services.endpoints.users.accounts as svc
 from app.schemas.systems.responses import (
     GetListResponse,
     GetOneResponse,
-    SuccessResponse,
+    JSendSuccess,
 )
 
 router = APIRouter()
@@ -22,7 +22,7 @@ async def get_account_list() -> Response:
     )
 
 
-@router.post("", response_model=SuccessResponse)
+@router.post("", response_model=JSendSuccess)
 async def create_account_info(
     user_account_req: py_schema.UserAccountReq = Body(...),
 ) -> Response:
@@ -34,7 +34,7 @@ async def create_account_info(
     )
 
 
-@router.get("/{id}", response_model=SuccessResponse)
+@router.get("/{id}", response_model=JSendSuccess)
 async def get_account_by_id(
     id: str = Path(...),
 ) -> Response:
@@ -46,13 +46,13 @@ async def get_account_by_id(
     )
 
 
-@router.delete("/{id}", response_model=SuccessResponse)
+@router.delete("/{id}", response_model=JSendSuccess)
 async def delete_account_by_id(
     id: str = Path(...),
 ) -> Response:
 
     data = []
 
-    return SuccessResponse(
+    return JSendSuccess(
         data=data,
     )

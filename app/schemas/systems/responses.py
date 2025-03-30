@@ -7,7 +7,7 @@ from app.schemas.systems import paginations as policy
 
 
 class JSendResponse(BaseModel):
-    status: StatusCode
+    status: StatusCode = StatusCode.SUCCESS
     code: int | None = Field(None, exclude=True)
     message: str | None = Field(None, exclude=True)
     data: dict | list | None = Field(None, exclude=True)
@@ -19,7 +19,7 @@ class JSendResponse(BaseModel):
         }
 
 
-class SuccessResponse(JSendResponse):
+class JSendSuccess(JSendResponse):
     status: StatusCode = StatusCode.SUCCESS
     data: str | dict | list | BaseModel = Field(..., example="Success Response")
     pagination: Union[policy.PageBase, policy.OffsetBase, policy.CursorBase, None] = (
@@ -39,7 +39,7 @@ class SuccessResponse(JSendResponse):
         return self
 
 
-class FailureResponse(JSendResponse):
+class JSendFailure(JSendResponse):
     status: StatusCode = StatusCode.FAILURE
     data: str | dict | list | BaseModel = Field(..., example="Success Response")
 
@@ -70,7 +70,7 @@ class ErrorResponse(JSendResponse):
         }
 
 
-class GetOneResponse(SuccessResponse):
+class GetOneResponse(JSendSuccess):
     status: StatusCode = StatusCode.SUCCESS
     data: BaseModel | list[BaseModel] = Field(...)
 
@@ -84,7 +84,7 @@ class GetOneResponse(SuccessResponse):
         }
 
 
-class GetListResponse(SuccessResponse):
+class GetListResponse(JSendSuccess):
     status: StatusCode = StatusCode.SUCCESS
     data: list = Field(...)
 
@@ -107,7 +107,7 @@ class GetListResponse(SuccessResponse):
         }
 
 
-class GetListResponseWithPagination(SuccessResponse):
+class GetListResponseWithPagination(JSendSuccess):
     status: StatusCode = StatusCode.SUCCESS
     data: list[BaseModel | dict] = []
     pagination: Union[policy.PageBase, policy.OffsetBase, policy.CursorBase] = Field(
@@ -126,19 +126,5 @@ class GetListResponseWithPagination(SuccessResponse):
                     "total": 36,
                     "total_pages": 4,
                 },
-            },
-        }
-
-
-class ActionResponse(SuccessResponse):
-    status: StatusCode = StatusCode.SUCCESS
-    data: str | dict | list | BaseModel = Field(None, example="Success Response")
-    message: str = "Request Submitted"
-
-    class Config:
-        json_schema_extra = {
-            "example": {
-                "status": StatusCode.SUCCESS,
-                "message": "Request Submitted",
             },
         }

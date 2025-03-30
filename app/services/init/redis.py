@@ -1,6 +1,6 @@
 import asyncio
 
-from app.common.exceptions.systems import RedisInitDataException, RedisSystemException
+from app.common.exceptions.sys import RedisInitDataException, RedisSystemException
 from app.core.logger import LOGGER
 from app.utils.database.redis import redis_client
 

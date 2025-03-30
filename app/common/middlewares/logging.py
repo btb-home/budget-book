@@ -11,27 +11,16 @@ from app.core.logger import LOGGER
 
 class LoggingMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
-        # 요청 시작 시간과 Correlation ID 설정
-        request.state.start_time = time.time()
-        request.state.correlation_id = request.headers.get(
-            X_CORRELATION_ID, uuid4().hex
-        )
-
         # 응답 처리
         response = await call_next(request)
-        process_time = f"{(time.time() - request.state.start_time):.3f} sec"
 
         # 응답 본문 읽기
         response_body = await self._capture_response_body(response)
 
-        # 응답 헤더에 추가 정보 삽입
-        response.headers[X_PROCESS_TIME] = process_time
-        response.headers[X_CORRELATION_ID] = request.state.correlation_id
-
         # Background Task로 로깅
         background_tasks = BackgroundTasks()
         background_tasks.add_task(
-            self._log_request_response, request, response, process_time, response_body
+            self._log_request_response, request, response, response_body
         )
         response.background = background_tasks
 
@@ -58,18 +47,16 @@ class LoggingMiddleware(BaseHTTPMiddleware):
         self,
         request: Request,
         response: Response,
-        process_time: str,
         response_body: str,
     ):
         """요청 및 응답을 로깅"""
         request_body = await self._get_request_body(request)
-
         LOGGER.info(
             {
                 "event": "application",
                 "endpoint": request.url.path,
                 "x_correlation_id": request.state.correlation_id,
-                "process_time": process_time,
+                "process_time": response.headers[X_PROCESS_TIME],
                 "request": {
                     "method": request.method,
                     "client": request.client.host,

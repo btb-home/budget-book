@@ -7,7 +7,7 @@ from app.schemas.ledgers.expenses import LedgerExpenseCreate
 from app.schemas.systems.responses import (
     GetListResponse,
     GetOneResponse,
-    SuccessResponse,
+    JSendSuccess,
 )
 from app.utils.database.db_session import get_sync_session
 
@@ -19,24 +19,24 @@ async def get_ledger_expenses() -> Response:
 
     data = await svc.fetch_expense_list()
 
-    return SuccessResponse(
+    return JSendSuccess(
         data=data,
     )
 
 
-@router.post("", response_model=SuccessResponse)
+@router.post("", response_model=JSendSuccess)
 async def post_ledger_expenses(
     ledger_expense: LedgerExpenseCreate = Body(...),
 ) -> Response:
 
     data = await svc.create_expense(ledger_expense)
 
-    return SuccessResponse(
+    return JSendSuccess(
         data=data,
     )
 
 
-@router.get("/{id}", response_model=SuccessResponse)
+@router.get("/{id}", response_model=JSendSuccess)
 async def get_ledger_expenses(
     id: int = Path(...),
 ) -> Response:
@@ -48,13 +48,13 @@ async def get_ledger_expenses(
     )
 
 
-@router.delete("/{id}", response_model=SuccessResponse)
+@router.delete("/{id}", response_model=JSendSuccess)
 async def delete_ledger_expenses(
     id: int = Path(...),
 ) -> Response:
 
     data = []
 
-    return SuccessResponse(
+    return JSendSuccess(
         data=data,
     )
